@@ -10,4 +10,13 @@ FetchContent_Declare(
     GIT_TAG ${PYBIND11_VERSION}
 )
 FetchContent_MakeAvailable(pybind11)
-pybind11_add_module(myModule backend/test.cpp)
+
+pybind11_add_module(
+    dengue 
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/models_bindings/dengue_case.cpp
+)
+
+target_include_directories(
+    dengue 
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/backend/models
+)

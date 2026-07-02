@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import math
+import polars as pl
 
 
 class CaseNormalizer(ABC):
@@ -11,16 +11,23 @@ class CaseNormalizer(ABC):
 
 class DadosAbertosNormalizer():
 
-    def age(self, age):
-        age = int(age)
-        age = math.ceil(age / 100)
-        return age
+    def normalize_date(self, df, column):
+        return df.with_columns(
+            pl.col(f"{column}")
+            .str.replace_all("-", "")
+            .cast(pl.Int64, strict=False)
+            .fill_null(0)
+            .alias(f"{column}")
+        )
     
+    def normalize_int(self, df, column):
+        return df.with_columns(
+            pl.col(f"{column}")
+            .cast(pl.Int64, strict=False)
+            .fill_null(0)
+            .alias(f"{column}")
+        )
 
-    def year_birth(self, year):
 
-        if not year:
-            return 0
 
-        year = int(year)
-        return year
+#vai precisar fazer do ano de nascimento

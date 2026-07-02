@@ -15,10 +15,12 @@ FetchContent_MakeAvailable(pybind11)
 
 pybind11_add_module(
     dengue 
-    ${CMAKE_CURRENT_SOURCE_DIR}/backend/models_bindings/dengue_case.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/modules/dengue_case.cpp
 )
 
 target_include_directories(
     dengue 
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/backend/models
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/engine
 )

@@ -1,3 +1,6 @@
+
+#pragma once
+
 #include <iostream>
 
 struct DengueCase {
@@ -11,7 +14,6 @@ struct DengueCase {
     int state_living_code;
     int city_living_code;
 
-    std::string name;
     int age;
     int year_birth;
     int escolarity;

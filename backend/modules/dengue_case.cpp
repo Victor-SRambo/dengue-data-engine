@@ -1,7 +1,10 @@
 #include <iostream>
 
 #include "dengue_case.h"
+#include "mapper.h"
+
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -13,6 +16,11 @@ void printAge(DengueCase dengueCase) {
 PYBIND11_MODULE(dengue, m) {
 
     m.def("printAge", &printAge);
+    
+    py::class_<DadosAbertosMapper>(m, "DadosAbertosMapper")
+        .def(py::init<>())
+        .def("mapDengueCase", &DadosAbertosMapper::mapDengueCase);
+
 
     py::class_<DengueCase>(m, "DengueCase")
         .def(py::init<>())
@@ -27,7 +35,6 @@ PYBIND11_MODULE(dengue, m) {
         .def_readwrite("state_living_code", &DengueCase::state_living_code)
         .def_readwrite("city_living_code", &DengueCase::city_living_code)
 
-        .def_readwrite("name", &DengueCase::name)
         .def_readwrite("age", &DengueCase::age)
         .def_readwrite("year_birth", &DengueCase::year_birth)
         .def_readwrite("escolarity", &DengueCase::escolarity)

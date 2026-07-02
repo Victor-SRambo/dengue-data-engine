@@ -1,8 +1,9 @@
 
 
 from build.Debug import dengue
-from backend.services import importer, mapper, normalizer
+from backend.services import importer, loader, normalizer
 from fastapi import FastAPI
+import polars as pl
 
 app = FastAPI()
 
@@ -23,13 +24,22 @@ dengue.printAge(caso1)
 
 
 
-mapper = mapper.DadosAbertosMapper()
+loader = loader.DadosAbertosLoader()
 importer = importer.DadosAbertosImporter()
 
-importer.import_year(24)
+#importer.import_year(24)
 
-for case in mapper.map_cases(24):
-    pass
+for df_bath in loader.map_cases(26):
+
+    ages = df_bath["NU_IDADE_N"].to_list()
+    notification_date = df_bath["DT_NOTIFIC"].to_list()
+    first_symptoms_date = df_bath["DT_SIN_PRI"].to_list()
+
+    mapper = dengue.DadosAbertosMapper()
+    dengue_cases = mapper.mapDengueCase(ages, notification_date, first_symptoms_date)
+
+    print(dengue_cases[0].age)
+
 
 #funções:
 #carrega csv na db

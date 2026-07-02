@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 class CaseImporter(ABC):
 
     @abstractmethod
-    def import_year(self):
+    def import_year(self, year):
         pass
 
 

@@ -15,6 +15,7 @@ class CaseImporter(ABC):
 class DadosAbertosImporter(CaseImporter):
 
     def import_year(self, year):
-        dados_abertos.requestZipCasesYear(year)
-        dados_abertos.unzipCasesYear(year)
+        print("Começando importação")
+        dados_abertos.requestCSVCasesYear(year)
+        print("Importação concluida com sucesso")
 

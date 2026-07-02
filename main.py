@@ -1,7 +1,7 @@
 
 
 from build.Debug import dengue
-from backend.services import importer, mapper
+from backend.services import importer, mapper, normalizer
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -13,20 +13,23 @@ def root(nome: str):
 
 
 """
-importer = importer.DadosAbertosImporter()
-importer.import_year(26)
-
-mapper = mapper.DadosAbertosMapper()
-mapper.map_cases()
-
-"""
-
 caso1 = dengue.DengueCase()
 caso1.age = 3
 
 print(caso1.age)
 
 dengue.printAge(caso1)
+"""
+
+
+
+mapper = mapper.DadosAbertosMapper()
+importer = importer.DadosAbertosImporter()
+
+importer.import_year(24)
+
+for case in mapper.map_cases(24):
+    pass
 
 #funções:
 #carrega csv na db

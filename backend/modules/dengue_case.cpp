@@ -2,6 +2,8 @@
 
 #include "dengue_case.h"
 #include "mapper.h"
+#include "file_manager.h"
+
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -20,6 +22,13 @@ PYBIND11_MODULE(dengue, m) {
     py::class_<DadosAbertosMapper>(m, "DadosAbertosMapper")
         .def(py::init<>())
         .def("mapDengueCase", &DadosAbertosMapper::mapDengueCase);
+
+
+    py::class_<FileManager>(m, "FileManager")
+        .def(py::init<>())
+        .def("append_bin", &FileManager::append_bin)
+        .def("truncate_bins", &FileManager::truncate_bins)
+        .def("load_bin", &FileManager::load_bin);
 
 
     py::class_<DengueCase>(m, "DengueCase")

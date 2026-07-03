@@ -12,12 +12,15 @@ class CaseNormalizer(ABC):
 class DadosAbertosNormalizer():
 
     def normalize_date(self, df, column):
-        return df.with_columns(
+        df = df.with_columns(
             pl.col(f"{column}")
             .str.replace_all("-", "")
             .cast(pl.Int64, strict=False)
-            .fill_null(0)
             .alias(f"{column}")
+        )
+
+        return df.filter(
+            (pl.col(column).is_not_null()) & (pl.col(column) != 0),
         )
     
     def normalize_int(self, df, column):

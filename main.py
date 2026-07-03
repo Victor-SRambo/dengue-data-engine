@@ -29,6 +29,9 @@ importer = importer.DadosAbertosImporter()
 
 #importer.import_year(24)
 
+file_manager = dengue.FileManager()
+file_manager.truncate_bins(2026)
+
 for df_bath in loader.map_cases(26):
 
     ages = df_bath["NU_IDADE_N"].to_list()
@@ -38,7 +41,11 @@ for df_bath in loader.map_cases(26):
     mapper = dengue.DadosAbertosMapper()
     dengue_cases = mapper.mapDengueCase(ages, notification_date, first_symptoms_date)
 
-    print(dengue_cases[0].age)
+    print(dengue_cases[0].notification_date)
+    file_manager.append_bin(dengue_cases)
+
+data = file_manager.load_bin(20262)
+print(data[0].age)
 
 
 #funções:

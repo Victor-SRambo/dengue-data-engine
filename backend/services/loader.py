@@ -36,6 +36,7 @@ class DadosAbertosLoader(CaseLoader):
             df_batch = self.normalizer.normalize_date(df_batch, "DT_NOTIFIC")
             df_batch = self.normalizer.normalize_date(df_batch, "DT_SIN_PRI")
             df_batch = self.normalizer.normalize_int(df_batch, "NU_IDADE_N")
+            df_batch = self.normalizer.normalize_int(df_batch, "ID_MUNICIP")
 
 
             print("Mapeamento concluido com sucesso")

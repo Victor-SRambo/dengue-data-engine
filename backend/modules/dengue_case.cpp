@@ -3,7 +3,7 @@
 #include "dengue_case.h"
 #include "mapper.h"
 #include "file_manager.h"
-
+#include "sorter.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -29,6 +29,11 @@ PYBIND11_MODULE(dengue, m) {
         .def("append_bin", &FileManager::append_bin)
         .def("truncate_bins", &FileManager::truncate_bins)
         .def("load_bin", &FileManager::load_bin);
+
+    py::class_<CaseSorter>(m, "CaseSorter") 
+        .def(py::init<>())
+        .def("sort", &CaseSorter::sort);
+    
 
 
     py::class_<DengueCase>(m, "DengueCase")

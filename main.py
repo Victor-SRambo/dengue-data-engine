@@ -13,22 +13,9 @@ def root(nome: str):
 
 
 
-"""
-caso1 = dengue.DengueCase()
-caso1.age = 3
-
-print(caso1.age)
-
-dengue.printAge(caso1)
-"""
-
-
 
 loader = loader.DadosAbertosLoader()
 importer = importer.DadosAbertosImporter()
-
-#importer.import_year(24)
-
 file_manager = dengue.FileManager()
 file_manager.truncate_bins(2026)
 
@@ -37,15 +24,23 @@ for df_bath in loader.map_cases(26):
     ages = df_bath["NU_IDADE_N"].to_list()
     notification_date = df_bath["DT_NOTIFIC"].to_list()
     first_symptoms_date = df_bath["DT_SIN_PRI"].to_list()
+    city_notification_code = df_bath["ID_MUNICIP"].to_list()
 
     mapper = dengue.DadosAbertosMapper()
-    dengue_cases = mapper.mapDengueCase(ages, notification_date, first_symptoms_date)
+    dengue_cases = mapper.mapDengueCase(ages, 
+                                        notification_date, 
+                                        first_symptoms_date, 
+                                        city_notification_code)
 
-    print(dengue_cases[0].notification_date)
     file_manager.append_bin(dengue_cases)
 
 data = file_manager.load_bin(20262)
-print(data[0].age)
+sorter = dengue.CaseSorter()
+sorted_indexes = sorter.sort(data)
+sorted_data = [data[i] for i in sorted_indexes]
+
+for case in sorted_data:
+    print(case.city_notification_code)
 
 
 #funções:

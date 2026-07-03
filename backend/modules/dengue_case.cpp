@@ -4,6 +4,8 @@
 #include "mapper.h"
 #include "file_manager.h"
 #include "sorter.h"
+#include "indexer.h"
+#include "sorter_binding.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -30,11 +32,39 @@ PYBIND11_MODULE(dengue, m) {
         .def("truncate_bins", &FileManager::truncate_bins)
         .def("load_bin", &FileManager::load_bin);
 
+        
     py::class_<CaseSorter>(m, "CaseSorter") 
         .def(py::init<>())
-        .def("sort", &CaseSorter::sort);
+        .def("sort", &CaseSorter::sort)
+        .def("select_field", &CaseSorter::select_field);
+
+
+    py::class_<CaseSortingField,
+               PyCaseSortingField,
+               std::shared_ptr<CaseSortingField>>(m, "CaseSortingField")
+        .def(py::init<>())
+        .def("field", &CaseSortingField::field);
+
+    py::class_<CaseDateField,
+               CaseSortingField,
+               std::shared_ptr<CaseDateField>>(m, "CaseDateField")
+        .def(py::init<>());
+
+    py::class_<CaseCityCodeField,
+               CaseSortingField,
+               std::shared_ptr<CaseCityCodeField>>(m, "CaseCityCodeField")
+        .def(py::init<>());
     
 
+    py::class_<IndexRegister>(m, "IndexRegister")
+        .def(py::init<>())
+        .def_readwrite("city_notification_code", &IndexRegister::city_notification_code)
+        .def_readwrite("start", &IndexRegister::start)
+        .def_readwrite("end", &IndexRegister::end);
+
+    py::class_<Indexer>(m, "Indexer")
+        .def(py::init<>())
+        .def("create_index", &Indexer::create_index);
 
     py::class_<DengueCase>(m, "DengueCase")
         .def(py::init<>())

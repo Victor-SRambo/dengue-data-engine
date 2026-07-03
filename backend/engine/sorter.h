@@ -33,7 +33,45 @@ public:
 };
 
 
+class CaseSortingField {
+
+public:
+    virtual void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) = 0;
+    virtual ~CaseSortingField() = default;
+
+};
+
+
+class CaseDateField : public CaseSortingField {
+public:
+    void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) override {
+        size_t size = cases.size();
+
+        for (int i = 0; i < size; i++) {
+            vector.push_back(cases[i].notification_date);
+            indexes.push_back(i);
+        }
+    }
+};
+
+
+class CaseCityCodeField : public CaseSortingField {
+public:
+    void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) override {
+        size_t size = cases.size();
+
+        for (int i = 0; i < size; i++) {
+            vector.push_back(cases[i].city_notification_code);
+            indexes.push_back(i);
+        }
+    }
+};
+
+
 class CaseSorter {
+private:
+    std::shared_ptr<CaseSortingField> field;
+
 public:
     std::vector<int> sort(std::vector<DengueCase> cases) {
 
@@ -41,18 +79,22 @@ public:
         std::vector<int> indexes;
         size_t size = cases.size();
 
-        for (int i = 0; i < size; i++) {
-            vector.push_back(cases[i].city_notification_code);
-            indexes.push_back(i);
+        if(!field) {
+            throw std::runtime_error("Field was not selected for sorting");
         }
 
+        field->field(cases, vector, indexes);
 
         QuickSort sorting;
 
         sorting.quicksort(vector, indexes, 0, size-1);
 
         return indexes;
-    };
+    }
+
+    void select_field(std::shared_ptr<CaseSortingField> f) {
+        field = f;
+    }
 };
 
 

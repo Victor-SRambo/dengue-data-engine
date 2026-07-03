@@ -12,35 +12,56 @@ def root(nome: str):
     return {"Hello": f"{nome}"}
 
 
+"""
+    loader = loader.DadosAbertosLoader()
+    importer = importer.DadosAbertosImporter()
+    file_manager = dengue.FileManager()
+    file_manager.truncate_bins(2026)
+
+    for df_bath in loader.map_cases(26):
+
+        ages = df_bath["NU_IDADE_N"].to_list()
+        notification_date = df_bath["DT_NOTIFIC"].to_list()
+        first_symptoms_date = df_bath["DT_SIN_PRI"].to_list()
+        city_notification_code = df_bath["ID_MUNICIP"].to_list()
+
+        mapper = dengue.DadosAbertosMapper()
+        dengue_cases = mapper.mapDengueCase(ages, 
+                                            notification_date, 
+                                            first_symptoms_date, 
+                                            city_notification_code)
+
+        file_manager.append_bin(dengue_cases)
+"""
 
 
-loader = loader.DadosAbertosLoader()
-importer = importer.DadosAbertosImporter()
 file_manager = dengue.FileManager()
-file_manager.truncate_bins(2026)
+data = file_manager.load_bin(20263)
 
-for df_bath in loader.map_cases(26):
 
-    ages = df_bath["NU_IDADE_N"].to_list()
-    notification_date = df_bath["DT_NOTIFIC"].to_list()
-    first_symptoms_date = df_bath["DT_SIN_PRI"].to_list()
-    city_notification_code = df_bath["ID_MUNICIP"].to_list()
-
-    mapper = dengue.DadosAbertosMapper()
-    dengue_cases = mapper.mapDengueCase(ages, 
-                                        notification_date, 
-                                        first_symptoms_date, 
-                                        city_notification_code)
-
-    file_manager.append_bin(dengue_cases)
-
-data = file_manager.load_bin(20262)
 sorter = dengue.CaseSorter()
+sorter.select_field(dengue.CaseCityCodeField())
 sorted_indexes = sorter.sort(data)
 sorted_data = [data[i] for i in sorted_indexes]
 
-for case in sorted_data:
-    print(case.city_notification_code)
+
+indexer = dengue.Indexer();
+indexes = indexer.create_index(sorted_data);
+
+sorter.select_field(dengue.CaseDateField())
+
+final_sorted = []
+
+for index in indexes:
+    chunk = sorted_data[index.start:index.end]
+
+    idx = sorter.sort(chunk)
+    sorted_chunk = [chunk[i] for i in idx]
+
+    final_sorted.extend(sorted_chunk)
+
+
+
 
 
 #funções:

@@ -8,6 +8,7 @@
 #include <array>
 #include <string>
 
+//MUDAR NOME PARA BIN_MANAGER
 
 class FileManager {
 

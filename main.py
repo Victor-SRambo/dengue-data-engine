@@ -1,9 +1,8 @@
 
 
 from build.Debug import dengue
-from backend.services import importer, loader, normalizer
+from backend.services import csv_loader, csv_normalizer, csv_list_converter, importer
 from fastapi import FastAPI
-import polars as pl
 
 app = FastAPI()
 
@@ -12,40 +11,38 @@ def root(nome: str):
     return {"Hello": f"{nome}"}
 
 
-"""
-    loader = loader.DadosAbertosLoader()
-    importer = importer.DadosAbertosImporter()
-    file_manager = dengue.FileManager()
-    file_manager.truncate_bins(2026)
+loader = csv_loader.DengueLoader(
+    csv_normalizer.DengueNormalizer()
+)
 
-    for df_bath in loader.map_cases(26):
+importer = importer.DengueImporter()
+normalizer = csv_normalizer.DengueNormalizer()
+mapper = dengue.DadosAbertosMapper()
+file_manager = dengue.FileManager()
+file_manager.truncate_bins(2026)
+list_converter = csv_list_converter.DengueListConverter()
 
-        ages = df_bath["NU_IDADE_N"].to_list()
-        notification_date = df_bath["DT_NOTIFIC"].to_list()
-        first_symptoms_date = df_bath["DT_SIN_PRI"].to_list()
-        city_notification_code = df_bath["ID_MUNICIP"].to_list()
 
-        mapper = dengue.DadosAbertosMapper()
-        dengue_cases = mapper.mapDengueCase(ages, 
-                                            notification_date, 
-                                            first_symptoms_date, 
-                                            city_notification_code)
+for df_batch in loader.batch_load_csv(26):
 
-        file_manager.append_bin(dengue_cases)
-"""
+    df_batch = normalizer.normalize_cases_csv(df_batch)
 
+    fields = list_converter.to_list(df_batch)
+
+    dengue_cases = mapper.mapDengueCase(fields)
+
+    file_manager.append_bin(dengue_cases)
 
 file_manager = dengue.FileManager()
-data = file_manager.load_bin(20263)
-
-
 sorter = dengue.CaseSorter()
 sorter.select_field(dengue.CaseCityCodeField())
+indexer = dengue.Indexer();
+
+data = file_manager.load_bin(20263)
+
 sorted_indexes = sorter.sort(data)
 sorted_data = [data[i] for i in sorted_indexes]
 
-
-indexer = dengue.Indexer();
 indexes = indexer.create_index(sorted_data);
 
 sorter.select_field(dengue.CaseDateField())
@@ -60,7 +57,10 @@ for index in indexes:
 
     final_sorted.extend(sorted_chunk)
 
+for case in final_sorted:
+    print(f"{case.city_notification_code} - {case.notification_date}")
 
+print("All Done!!!")
 
 
 

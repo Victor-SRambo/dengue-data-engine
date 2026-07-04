@@ -2,9 +2,9 @@ from backend.integration import dados_abertos
 from abc import ABC, abstractmethod
 
 
+#MUDAR NOME CSV_fetcher
 
-
-class CaseImporter(ABC):
+class ArbovirusImporter(ABC):
 
     @abstractmethod
     def import_year(self, year):
@@ -12,7 +12,7 @@ class CaseImporter(ABC):
 
 
 
-class DadosAbertosImporter(CaseImporter):
+class DengueImporter(ArbovirusImporter):
 
     def import_year(self, year):
         print("Começando importação")

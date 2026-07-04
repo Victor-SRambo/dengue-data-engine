@@ -38,6 +38,27 @@ PYBIND11_MODULE(dengue, m) {
         .def("sort", &CaseSorter::sort)
         .def("select_field", &CaseSorter::select_field);
 
+    py::class_<DengueFieldVectors>(m, "DengueFieldVectors")
+        .def(py::init<>())
+
+        .def_readwrite("notification_dates", &DengueFieldVectors::notification_dates)
+        .def_readwrite("first_symptoms_dates", &DengueFieldVectors::first_symptoms_dates)
+        .def_readwrite("epidemiological_weeks", &DengueFieldVectors::epidemiological_weeks)
+
+        .def_readwrite("state_notification_codes", &DengueFieldVectors::state_notification_codes)
+        .def_readwrite("city_notification_codes", &DengueFieldVectors::city_notification_codes)
+
+        .def_readwrite("state_living_codes", &DengueFieldVectors::state_living_codes)
+        .def_readwrite("city_living_codes", &DengueFieldVectors::city_living_codes)
+
+        .def_readwrite("ages", &DengueFieldVectors::ages)
+        .def_readwrite("year_births", &DengueFieldVectors::year_births)
+        .def_readwrite("escolarities", &DengueFieldVectors::escolarities)
+        .def_readwrite("professions", &DengueFieldVectors::professions)
+        .def_readwrite("pregnancy_states", &DengueFieldVectors::pregnancy_states)
+        .def_readwrite("ethnicities", &DengueFieldVectors::ethnicities)
+
+        .def_readwrite("sexes", &DengueFieldVectors::sexes);
 
     py::class_<CaseSortingField,
                PyCaseSortingField,
@@ -54,6 +75,7 @@ PYBIND11_MODULE(dengue, m) {
                CaseSortingField,
                std::shared_ptr<CaseCityCodeField>>(m, "CaseCityCodeField")
         .def(py::init<>());
+
     
 
     py::class_<IndexRegister>(m, "IndexRegister")

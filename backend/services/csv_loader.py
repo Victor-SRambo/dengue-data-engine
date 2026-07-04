@@ -1,0 +1,38 @@
+from abc import ABC, abstractmethod
+import polars as pl
+
+
+_COLUMNS = [
+    "DT_NOTIFIC", "DT_SIN_PRI", "SEM_NOT",
+    "SG_UF_NOT", "ID_MUNICIP",
+    "SG_UF", "ID_MN_RESI",
+    "NU_IDADE_N", "ANO_NASC",
+    "CS_ESCOL_N", "ID_OCUPA_N", "CS_GESTANT",
+    "CS_RACA", "CS_SEXO",
+]
+
+
+class ArboVirusLoader(ABC):
+
+    @abstractmethod
+    def batch_load_csv(self, year):
+        pass
+
+
+#MUDAR NOME PARA CSV_loader
+
+
+class DengueLoader(ArboVirusLoader):
+
+    def __init__(self, normalizer):
+        self.normalizer = normalizer;
+
+    def batch_load_csv(self, year):
+        print("Loading CSV")
+        lf = pl.scan_csv(f"backend/data/DENGBR{year}.csv", ignore_errors=True).select(_COLUMNS);
+
+        for df_batch in lf.collect_batches(chunk_size=20000):
+            yield df_batch
+
+
+

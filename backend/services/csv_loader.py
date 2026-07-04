@@ -19,9 +19,6 @@ class ArboVirusLoader(ABC):
         pass
 
 
-#MUDAR NOME PARA CSV_loader
-
-
 class DengueLoader(ArboVirusLoader):
 
     def __init__(self, normalizer):
@@ -32,6 +29,7 @@ class DengueLoader(ArboVirusLoader):
         lf = pl.scan_csv(f"backend/data/DENGBR{year}.csv", ignore_errors=True).select(_COLUMNS);
 
         for df_batch in lf.collect_batches(chunk_size=20000):
+            df_batch = self.normalizer.normalize_cases_csv(df_batch)
             yield df_batch
 
 

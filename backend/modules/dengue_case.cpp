@@ -30,7 +30,8 @@ PYBIND11_MODULE(dengue, m) {
         .def(py::init<>())
         .def("append_bin", &FileManager::append_bin)
         .def("truncate_bins", &FileManager::truncate_bins)
-        .def("load_bin", &FileManager::load_bin);
+        .def("load_bin", &FileManager::load_bin)
+        .def("overwrite_bin", &FileManager::overwrite_bin);
 
         
     py::class_<CaseSorter>(m, "CaseSorter") 

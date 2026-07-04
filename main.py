@@ -1,7 +1,8 @@
 
 
 from build.Debug import dengue
-from backend.services import csv_loader, csv_normalizer, csv_list_converter, importer
+from backend.services import dataset_importer, dataset_storer, dataset_builder
+from backend.integration import dados_abertos
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -10,7 +11,7 @@ app = FastAPI()
 def root(nome: str):
     return {"Hello": f"{nome}"}
 
-
+"""
 loader = csv_loader.DengueLoader(
     csv_normalizer.DengueNormalizer()
 )
@@ -62,7 +63,15 @@ for case in final_sorted:
 
 print("All Done!!!")
 
+"""
 
 
-#funções:
-#carrega csv na db
+
+#dataset_importer = dataset_importer.DengueDataImporter(dados_abertos.DengueHttpClient())
+#dataset_importer.import_years(2025,2026)
+
+#dataset_storer = dataset_storer.DengueDataStorer()
+#dataset_storer.store_years(2025,2026)
+
+dataset_builder = dataset_builder.DengueDataBuilder()
+dataset_builder.build_years(2025,2025)

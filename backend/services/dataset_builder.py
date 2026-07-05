@@ -24,13 +24,12 @@ class DengueDataBuilder(ArbovirusDataBuilder):
 
         while y_current <= end_year:
 
-            for _ in range(13):
+            for _ in range(12):
 
                 year = y_current.strftime("%Y%m")
                 self.build_month(year)
-                y_current = y_current + relativedelta(months=1)
             
-            y_current = y_current + relativedelta(years=1)
+                y_current = y_current + relativedelta(months=1)
 
 
     def build_month(self, date):
@@ -39,16 +38,13 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         indexer = dengue.Indexer()
         sorter.select_field(dengue.CaseCityCodeField())
 
-
         data = file_manager.load_bin(int(date))
 
         if not data: return
 
         sorted_indexes = sorter.sort(data)
         sorted_data = [data[i] for i in sorted_indexes]
-
         indexes = indexer.create_index(sorted_data)
-
         sorter.select_field(dengue.CaseDateField())
 
         final_sorted = []
@@ -62,6 +58,7 @@ class DengueDataBuilder(ArbovirusDataBuilder):
             final_sorted.extend(sorted_chunk)
 
         file_manager.overwrite_bin(final_sorted, int(date))
+        file_manager.save_indexes(indexes, int(date))
 
 
         print("Month Done!!!")

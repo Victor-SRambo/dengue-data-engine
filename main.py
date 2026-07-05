@@ -1,7 +1,7 @@
 
 
 from build.Debug import dengue
-from backend.services import dataset_importer, dataset_storer, dataset_builder
+from backend.services import dataset_importer, dataset_storer, dataset_builder, dataset_fetcher
 from backend.integration import dados_abertos
 from fastapi import FastAPI
 
@@ -68,10 +68,17 @@ print("All Done!!!")
 
 
 #dataset_importer = dataset_importer.DengueDataImporter(dados_abertos.DengueHttpClient())
-#dataset_importer.import_years(2025,2026)
+#dataset_importer.import_years(2024,2024)
 
 #dataset_storer = dataset_storer.DengueDataStorer()
 #dataset_storer.store_years(2025,2026)
 
-dataset_builder = dataset_builder.DengueDataBuilder()
-dataset_builder.build_years(2025,2025)
+#dataset_builder = dataset_builder.DengueDataBuilder()
+#dataset_builder.build_years(2026,2026)
+
+dataset_fetcher = dataset_fetcher.DengueDataFetcher()
+
+
+cases = dataset_fetcher.fetch_dates(320530, 20260315, 20260515)
+#dataset_fetcher.fetch_month_after_date(320530, 20260515)
+#dataset_fetcher.fetch_entire_month(320530, 20260515)

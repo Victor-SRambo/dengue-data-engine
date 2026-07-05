@@ -5,6 +5,7 @@
 #include "file_manager.h"
 #include "sorter.h"
 #include "indexer.h"
+#include "binary_search.h"
 #include "sorter_binding.h"
 
 #include <pybind11/pybind11.h>
@@ -31,7 +32,17 @@ PYBIND11_MODULE(dengue, m) {
         .def("append_bin", &FileManager::append_bin)
         .def("truncate_bins", &FileManager::truncate_bins)
         .def("load_bin", &FileManager::load_bin)
-        .def("overwrite_bin", &FileManager::overwrite_bin);
+        .def("overwrite_bin", &FileManager::overwrite_bin)
+        .def("save_indexes", &FileManager::save_indexes)
+        .def("load_indexes", &FileManager::load_indexes)
+        .def("load_bin_from_index", &FileManager::load_bin_from_index);
+
+
+    py::class_<BinarySearch>(m, "BinarySearch")
+        .def(py::init<>())
+        .def("index_search", &BinarySearch::index_search)
+        .def("after_date_search", &BinarySearch::after_date_search)
+        .def("before_date_search", &BinarySearch::before_date_search);
 
         
     py::class_<CaseSorter>(m, "CaseSorter") 

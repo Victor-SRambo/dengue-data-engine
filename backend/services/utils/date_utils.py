@@ -33,22 +33,31 @@ def date_to_int_y_short(date):
 
 
 def get_intermediate_months_datetime(start_date, end_date):
-    current_date = start_date + relativedelta(months=1)
+    current_date = start_date.replace(day=1)
+    end_date = end_date.replace(day=1)
+
+    current_date = current_date + relativedelta(months=1)
 
     while current_date < end_date:
         yield current_date
+        print(current_date)
         current_date += relativedelta(months=1)
 
 
 def get_all_months_datetime(start_date, end_date):
-    current_date = start_date
+    current_date = start_date.replace(day=1)
+    end_date = end_date.replace(day=1)
+
 
     while current_date <= end_date:
         yield current_date
         current_date += relativedelta(months=1)
 
+
 def get_all_years_datetime(start_date, end_date):
-    current_date = start_date
+    current_date = start_date.replace(day=1)
+    end_date = end_date.replace(day=1)
+
 
     while current_date <= end_date:
         yield current_date

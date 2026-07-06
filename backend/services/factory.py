@@ -41,5 +41,5 @@ def create_dengue_dataset_searcher():
     binary_searcher=dengue.BinarySearch()
 
     return dataset_searcher.DengueDataSearcher(file_manager=file_manager, 
-                                            binary_searcher=binary_searcher)
+                                               binary_searcher=binary_searcher)
 

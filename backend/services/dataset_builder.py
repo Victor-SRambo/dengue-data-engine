@@ -24,10 +24,12 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         end_year = date_utils.convert_to_datetime(end_year)
 
         for date in date_utils.get_all_months_datetime(start_year, end_year):
+            print(date)
             self._build_month(date)
 
 
     def _build_month(self, date):
+        print(f"Month Start {date}!!!")
         date = date_utils.date_to_int_ym(date)
 
         cases = self.file_manager.load_bin(date)
@@ -39,8 +41,6 @@ class DengueDataBuilder(ArbovirusDataBuilder):
 
         self.file_manager.overwrite_bin(sorted_cases_by_city_date, date)
         self.file_manager.save_indexes(city_indexes, date)
-
-        print("Month Done!!!")
 
 
     def _sort_cases_by_date_per_city(self, sorted_cases_by_city, city_indexes):

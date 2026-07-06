@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from backend.services.utils import date_utils
-from build.Debug import dengue
 
 
 class ArbovirusDataSearcher(ABC):
@@ -24,6 +23,7 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         cases = []
 
         month_diference = end_date.month - start_date.month
+        print(month_diference)
 
         if month_diference == 0:
             before_cases_dates = {c.notification_date for c in self._get_cases_before_date_in_month(end_date, city_code)}
@@ -44,6 +44,7 @@ class DengueDataSearcher(ArbovirusDataSearcher):
                 cases.extend(self._get_cases_entire_month(date, city_code))
                 
             cases.extend(self._get_cases_before_date_in_month(end_date, city_code))
+
 
         return cases
     

@@ -8,6 +8,9 @@ class ArbovirusDataSearcher(ABC):
     def get_cases_dates(self, start_date, end_date, city_code):
         pass   
 
+    @abstractmethod
+    def get_num_cases_dates(self, start_date, end_date, city_code):
+        pass   
 
 
 class DengueDataSearcher(ArbovirusDataSearcher):
@@ -47,6 +50,26 @@ class DengueDataSearcher(ArbovirusDataSearcher):
 
 
         return cases
+    
+
+    def get_num_cases_dates(self, start_date, end_date, city_code):
+        start_date = date_utils.convert_to_datetime(start_date)
+        end_date = date_utils.convert_to_datetime(end_date)
+
+        month_num_cases = {}
+
+        for date in date_utils.get_all_months_datetime(start_date, end_date):
+
+            index = self._get_city_index(date, city_code)
+
+            if index is None: month_num_cases[date_ym] = 0
+            
+            num_cases = index.end - index.start
+            date_ym = date_utils.date_to_int_ym(date)
+
+            month_num_cases[date_ym] = num_cases
+
+        return month_num_cases
     
 
     def _get_city_index(self, date, city_code):

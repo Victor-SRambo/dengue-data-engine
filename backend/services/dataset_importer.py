@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from backend.services.utils import date_utils
 
 class ArbovirusDataImporter(ABC):

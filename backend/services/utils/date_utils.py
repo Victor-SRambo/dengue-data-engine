@@ -1,7 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
-_months_per_year = 12
 
 def convert_to_datetime(date):
     date = str(date)
@@ -40,7 +39,6 @@ def get_intermediate_months_datetime(start_date, end_date):
 
     while current_date < end_date:
         yield current_date
-        print(current_date)
         current_date += relativedelta(months=1)
 
 

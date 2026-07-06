@@ -27,7 +27,7 @@ def create_dengue_dataset_storer():
 
 def create_dengue_dataset_builder():
     file_manager = dengue.FileManager()
-    sorting_method = case_sorter.QuickSort()
+    sorting_method = case_sorter.MergeSort()
     sorter = case_sorter.CaseSorter(sorting_method)
     indexer = dengue.Indexer()
 

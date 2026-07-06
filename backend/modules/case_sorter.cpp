@@ -30,7 +30,7 @@ PYBIND11_MODULE(case_sorter, m) {
                PyCaseSortingField,
                std::shared_ptr<CaseSortingField>>(m, "CaseSortingField")
         .def(py::init<>())
-        .def("field", &CaseSortingField::field);
+        .def("field", &CaseSortingField::get_field);
 
 
     py::class_<DateField,

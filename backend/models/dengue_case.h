@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+
+struct Arbovirus {
+
+    virtual ~Arbovirus() = default;
+};
+
 struct DengueCase {
     int notification_date;
     int first_symptoms_date;

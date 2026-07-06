@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import polars as pl
+import os
 
 
 _COLUMNS = [
@@ -22,11 +23,21 @@ class ArboVirusLoader(ABC):
 class DengueLoader(ArboVirusLoader):
 
     def __init__(self, normalizer):
-        self.normalizer = normalizer;
+        self.normalizer = normalizer
 
     def batch_load_csv(self, year):
+        folder_path = "backend/data/"
+        file_name = f"DENGBR{year}.csv"
+
+        file_path = folder_path + file_name
+
+        if not os.path.isfile(file_path):
+            print("Csv file does not exist")
+            return None
+
+
         print("Loading CSV")
-        lf = pl.scan_csv(f"backend/data/DENGBR{year}.csv", ignore_errors=True).select(_COLUMNS);
+        lf = pl.scan_csv(file_path, ignore_errors=True).select(_COLUMNS);
 
         for df_batch in lf.collect_batches(chunk_size=20000):
             df_batch = self.normalizer.normalize_cases_csv(df_batch)

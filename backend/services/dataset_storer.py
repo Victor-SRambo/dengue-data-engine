@@ -1,8 +1,6 @@
-from backend.services import csv_loader, csv_normalizer, csv_list_converter
-from build.Debug import dengue
+
 from abc import ABC, abstractmethod
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from backend.services.utils import date_utils
 
 
 class ArbovirusDataStorer(ABC):
@@ -20,29 +18,32 @@ class ArbovirusDataStorer(ABC):
 
 class DengueDataStorer(ArbovirusDataStorer):
 
+    def __init__(self, loader, list_converter, mapper, file_manager):
+         self.loader = loader
+         self.list_converter = list_converter
+         self.mapper = mapper
+         self.file_manager = file_manager
+
+
     def store_years(self, start_year, end_year):
-        y_current= datetime.strptime(str(start_year), "%Y")
-        end_year = datetime.strptime(str(end_year), "%Y")
+        start_year = date_utils.convert_to_datetime(start_year)
+        end_year = date_utils.convert_to_datetime(end_year)
 
-        while y_current <= end_year:
-            year = y_current.strftime("%Y")
+        for year in date_utils.get_all_years_datetime(start_year, end_year):
             self.store_year(year)
-
-            y_current = y_current + relativedelta(years=1)
 
 
     def store_year(self, year):
-        loader = csv_loader.DengueLoader(csv_normalizer.DengueNormalizer())
-        list_converter = csv_list_converter.DengueListConverter()
+        year = date_utils.date_to_int_y_full(year)
+        self.file_manager.truncate_bins(year)
 
-        mapper = dengue.DadosAbertosMapper()
-        file_manager = dengue.FileManager()
+        for df_batch in self.loader.batch_load_csv(year):
+                
+                if df_batch is None: 
+                     continue
 
-        file_manager.truncate_bins(int(year))
-
-        for df_batch in loader.batch_load_csv(year):
-                fields = list_converter.to_list(df_batch)
-                dengue_cases = mapper.mapDengueCase(fields)
-                file_manager.append_bin(dengue_cases, int(year))
+                fields = self.list_converter.to_list(df_batch)
+                dengue_cases = self.mapper.mapDengueCase(fields)
+                self.file_manager.append_bin(dengue_cases, year)
 
 

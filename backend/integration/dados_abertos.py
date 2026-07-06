@@ -20,6 +20,13 @@ class DengueHttpClient(ArbovirusHttpClient):
 
         response = requests.get(url, stream=True) 
 
+        if response.status_code != 200: 
+            print("Erro ao fazer request do recurso")
+            return None
+        
+        print("Sucesso ao fazer request do recurso")
+        
+
         with open("backend/data/temp.zip","wb") as file:
             for chunk in response.iter_content(chunk_size=mb):
                 file.write(chunk)

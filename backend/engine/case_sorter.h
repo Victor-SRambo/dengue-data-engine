@@ -6,18 +6,26 @@
 #include "dengue_case.h"
 
 
-class QuickSort { 
-
+class SortingStrategy {
 public:
-    void quicksort(std::vector<int>& vector, std::vector<int>&idx, int min, int max) {
+    virtual void sort(std::vector<int>& vector, std::vector<int>&idx, int min, int max) = 0;
+    virtual int partition(std::vector<int>& vector, std::vector<int>&idx, int min, int max) = 0;
+    virtual ~SortingStrategy() = default;
+
+};
+
+
+class QuickSort : public SortingStrategy { 
+public:
+    void sort(std::vector<int>& vector, std::vector<int>&idx, int min, int max) override {
         if (min < max) {
             int p = partition(vector, idx, min, max);
-            quicksort(vector, idx, min, p-1);
-            quicksort(vector, idx, p+1, max);
+            sort(vector, idx, min, p-1);
+            sort(vector, idx, p+1, max);
         }
     }
 
-    int partition(std::vector<int>& vector, std::vector<int>&idx, int min, int max) {
+    int partition(std::vector<int>& vector, std::vector<int>&idx, int min, int max) override {
         int i = min - 1;
 
         for (int j = min; j < max; j++) {
@@ -34,15 +42,13 @@ public:
 
 
 class CaseSortingField {
-
 public:
     virtual void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) = 0;
     virtual ~CaseSortingField() = default;
-
 };
 
 
-class CaseDateField : public CaseSortingField {
+class DateField : public CaseSortingField {
 public:
     void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) override {
         size_t size = cases.size();
@@ -55,7 +61,7 @@ public:
 };
 
 
-class CaseCityCodeField : public CaseSortingField {
+class CityCodeField : public CaseSortingField {
 public:
     void field(std::vector<DengueCase>& cases, std::vector<int>& vector, std::vector<int>& indexes) override {
         size_t size = cases.size();
@@ -68,15 +74,24 @@ public:
 };
 
 
+
+
+
 class CaseSorter {
 private:
-    std::shared_ptr<CaseSortingField> field;
+    std::shared_ptr<SortingStrategy> _sorting;
 
 public:
-    std::vector<int> sort(std::vector<DengueCase> cases) {
+
+    CaseSorter(std::shared_ptr<SortingStrategy> sorting) 
+        :   _sorting(sorting) {}
+
+
+    std::vector<int> sort(std::vector<DengueCase> cases, std::shared_ptr<CaseSortingField> field) {
 
         std::vector<int> vector;
         std::vector<int> indexes;
+        
         size_t size = cases.size();
 
         if(!field) {
@@ -84,17 +99,9 @@ public:
         }
 
         field->field(cases, vector, indexes);
-
-        QuickSort sorting;
-
-        sorting.quicksort(vector, indexes, 0, size-1);
+        _sorting->sort(vector, indexes, 0, size-1);
 
         return indexes;
     }
-
-    void select_field(std::shared_ptr<CaseSortingField> f) {
-        field = f;
-    }
 };
-
 

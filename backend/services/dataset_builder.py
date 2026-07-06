@@ -1,64 +1,53 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
-from build.Debug import dengue
-from dateutil.relativedelta import relativedelta
+from build.Debug import case_sorter
+from backend.services.utils import date_utils
 
 
 class ArbovirusDataBuilder(ABC):
 
     @abstractmethod
-    def build_years(self, year):
+    def build_years(self, start_year, end_year):
         pass   
 
-
-    @abstractmethod
-    def build_month(self, date):
-        pass   
 
 
 class DengueDataBuilder(ArbovirusDataBuilder):
 
+    def __init__(self, file_manager, sorter, indexer):
+        self.file_manager = file_manager
+        self.sorter = sorter
+        self.indexer = indexer
+
+
     def build_years(self, start_year, end_year):
-        y_current= datetime.strptime(str(start_year), "%Y")
-        end_year = datetime.strptime(str(end_year), "%Y")
+        start_year = date_utils.convert_to_datetime(start_year)
+        end_year = date_utils.convert_to_datetime(end_year)
 
-        while y_current <= end_year:
-
-            for _ in range(12):
-
-                year = y_current.strftime("%Y%m")
-                self.build_month(year)
-            
-                y_current = y_current + relativedelta(months=1)
+        for date in date_utils.get_all_months_datetime(start_year, end_year):
+            self._build_month(date)
 
 
-    def build_month(self, date):
-        file_manager = dengue.FileManager()
-        sorter = dengue.CaseSorter()
-        indexer = dengue.Indexer()
-        sorter.select_field(dengue.CaseCityCodeField())
+    def _build_month(self, date):
+        date = date_utils.date_to_int_ym(date)
 
-        data = file_manager.load_bin(int(date))
+        cases = self.file_manager.load_bin(date)
+        if not cases: return
 
-        if not data: return
+        sorted_cases_by_city = [cases[i] for i in self.sorter.sort(cases, case_sorter.CityCodeField())]
+        city_indexes = self.indexer.create_index(sorted_cases_by_city)
+        sorted_cases_by_city_date = self._sort_cases_by_date_per_city(sorted_cases_by_city, city_indexes)
 
-        sorted_indexes = sorter.sort(data)
-        sorted_data = [data[i] for i in sorted_indexes]
-        indexes = indexer.create_index(sorted_data)
-        sorter.select_field(dengue.CaseDateField())
-
-        final_sorted = []
-
-        for index in indexes:
-            chunk = sorted_data[index.start:index.end]
-
-            idx = sorter.sort(chunk)
-            sorted_chunk = [chunk[i] for i in idx]
-
-            final_sorted.extend(sorted_chunk)
-
-        file_manager.overwrite_bin(final_sorted, int(date))
-        file_manager.save_indexes(indexes, int(date))
-
+        self.file_manager.overwrite_bin(sorted_cases_by_city_date, date)
+        self.file_manager.save_indexes(city_indexes, date)
 
         print("Month Done!!!")
+
+
+    def _sort_cases_by_date_per_city(self, sorted_cases_by_city, city_indexes):
+        sorted_cases = []
+        for index in city_indexes:
+            city_cases = sorted_cases_by_city[index.start:index.end]
+            sorted_city_cases = [city_cases[i] for i in self.sorter.sort(city_cases, case_sorter.DateField())]
+            sorted_cases.extend(sorted_city_cases)
+
+        return sorted_cases

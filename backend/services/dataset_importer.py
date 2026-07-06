@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from backend.services.utils import date_utils
 
 class ArbovirusDataImporter(ABC):
 
@@ -20,18 +20,14 @@ class DengueDataImporter(ArbovirusDataImporter):
         self.client = client
 
 
-
     def import_years(self, start_year, end_year):
-        y_current= datetime.strptime(str(start_year), "%Y")
-        end_year = datetime.strptime(str(end_year), "%Y")
+        start_year = date_utils.convert_to_datetime(start_year)
+        end_year = date_utils.convert_to_datetime(end_year)
 
-        while y_current <= end_year:
-            year = y_current.strftime("%y")
+        for year in date_utils.get_all_years_datetime(start_year, end_year):
             self.import_year(year)
-
-            y_current = y_current + relativedelta(years=1)
 
 
     def import_year(self, year):
-        print(f"Importing year: {year}")
+        year = date_utils.date_to_int_y_short(year)
         self.client.request_year_csv(year)

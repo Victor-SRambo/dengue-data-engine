@@ -1,8 +1,6 @@
 
 
-from build.Debug import dengue
-from backend.services import dataset_importer, dataset_storer, dataset_builder, dataset_fetcher
-from backend.integration import dados_abertos
+from backend.services import factory
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -11,74 +9,18 @@ app = FastAPI()
 def root(nome: str):
     return {"Hello": f"{nome}"}
 
-"""
-loader = csv_loader.DengueLoader(
-    csv_normalizer.DengueNormalizer()
-)
 
-importer = importer.DengueImporter()
-normalizer = csv_normalizer.DengueNormalizer()
-mapper = dengue.DadosAbertosMapper()
-file_manager = dengue.FileManager()
-file_manager.truncate_bins(2026)
-list_converter = csv_list_converter.DengueListConverter()
+dataset_importer = factory.create_dengue_dataset_importer()
+dataset_importer.import_years(2026, 2027)
 
+dataset_storer = factory.create_dengue_dataset_storer()
+dataset_storer.store_years(2026, 2027)
 
-for df_batch in loader.batch_load_csv(26):
+dataset_builder = factory.create_dengue_dataset_builder()
+dataset_builder.build_years(2026, 2027)
 
-    df_batch = normalizer.normalize_cases_csv(df_batch)
+dataset_searcher = factory.create_dengue_dataset_searcher()
+cases = dataset_searcher.get_cases_dates(20260501, 20260615, 320530)
 
-    fields = list_converter.to_list(df_batch)
-
-    dengue_cases = mapper.mapDengueCase(fields)
-
-    file_manager.append_bin(dengue_cases)
-
-file_manager = dengue.FileManager()
-sorter = dengue.CaseSorter()
-sorter.select_field(dengue.CaseCityCodeField())
-indexer = dengue.Indexer();
-
-data = file_manager.load_bin(20263)
-
-sorted_indexes = sorter.sort(data)
-sorted_data = [data[i] for i in sorted_indexes]
-
-indexes = indexer.create_index(sorted_data);
-
-sorter.select_field(dengue.CaseDateField())
-
-final_sorted = []
-
-for index in indexes:
-    chunk = sorted_data[index.start:index.end]
-
-    idx = sorter.sort(chunk)
-    sorted_chunk = [chunk[i] for i in idx]
-
-    final_sorted.extend(sorted_chunk)
-
-for case in final_sorted:
-    print(f"{case.city_notification_code} - {case.notification_date}")
-
-print("All Done!!!")
-
-"""
-
-
-
-#dataset_importer = dataset_importer.DengueDataImporter(dados_abertos.DengueHttpClient())
-#dataset_importer.import_years(2024,2024)
-
-#dataset_storer = dataset_storer.DengueDataStorer()
-#dataset_storer.store_years(2025,2026)
-
-#dataset_builder = dataset_builder.DengueDataBuilder()
-#dataset_builder.build_years(2026,2026)
-
-dataset_fetcher = dataset_fetcher.DengueDataFetcher()
-
-
-cases = dataset_fetcher.fetch_dates(320530, 20260315, 20260515)
-#dataset_fetcher.fetch_month_after_date(320530, 20260515)
-#dataset_fetcher.fetch_entire_month(320530, 20260515)
+for case in cases:
+    print(case.notification_date)

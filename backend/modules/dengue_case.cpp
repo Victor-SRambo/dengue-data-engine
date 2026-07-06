@@ -3,10 +3,8 @@
 #include "dengue_case.h"
 #include "mapper.h"
 #include "file_manager.h"
-#include "sorter.h"
 #include "indexer.h"
 #include "binary_search.h"
-#include "sorter_binding.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -14,13 +12,9 @@
 namespace py = pybind11;
 
 
-void printAge(DengueCase dengueCase) {
-    std::cout << dengueCase.age;
-}
 
 PYBIND11_MODULE(dengue, m) {
 
-    m.def("printAge", &printAge);
     
     py::class_<DadosAbertosMapper>(m, "DadosAbertosMapper")
         .def(py::init<>())
@@ -44,11 +38,6 @@ PYBIND11_MODULE(dengue, m) {
         .def("after_date_search", &BinarySearch::after_date_search)
         .def("before_date_search", &BinarySearch::before_date_search);
 
-        
-    py::class_<CaseSorter>(m, "CaseSorter") 
-        .def(py::init<>())
-        .def("sort", &CaseSorter::sort)
-        .def("select_field", &CaseSorter::select_field);
 
     py::class_<DengueFieldVectors>(m, "DengueFieldVectors")
         .def(py::init<>())
@@ -71,22 +60,6 @@ PYBIND11_MODULE(dengue, m) {
         .def_readwrite("ethnicities", &DengueFieldVectors::ethnicities)
 
         .def_readwrite("sexes", &DengueFieldVectors::sexes);
-
-    py::class_<CaseSortingField,
-               PyCaseSortingField,
-               std::shared_ptr<CaseSortingField>>(m, "CaseSortingField")
-        .def(py::init<>())
-        .def("field", &CaseSortingField::field);
-
-    py::class_<CaseDateField,
-               CaseSortingField,
-               std::shared_ptr<CaseDateField>>(m, "CaseDateField")
-        .def(py::init<>());
-
-    py::class_<CaseCityCodeField,
-               CaseSortingField,
-               std::shared_ptr<CaseCityCodeField>>(m, "CaseCityCodeField")
-        .def(py::init<>());
 
     
 

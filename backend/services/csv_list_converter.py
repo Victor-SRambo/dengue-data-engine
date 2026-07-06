@@ -30,3 +30,4 @@ class DengueListConverter(ArbovirusListConverter):
         fields.sexes = df["CS_SEXO"].to_list()
 
         return fields
+    

@@ -4,6 +4,8 @@ project(Dengue)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+
 include(FetchContent)
 
 
@@ -23,6 +25,18 @@ pybind11_add_module(
 
 target_include_directories(
     dengue 
+    PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/models
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/engine
+)
+
+pybind11_add_module(
+    case_sorter 
+    ${CMAKE_CURRENT_SOURCE_DIR}/backend/modules/case_sorter.cpp
+)
+
+target_include_directories(
+    case_sorter 
     PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/backend/models
     ${CMAKE_CURRENT_SOURCE_DIR}/backend/engine

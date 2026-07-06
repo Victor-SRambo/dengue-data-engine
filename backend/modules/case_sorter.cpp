@@ -21,6 +21,12 @@ PYBIND11_MODULE(case_sorter, m) {
         .def(py::init<>());
 
 
+    py::class_<MergeSort,
+                SortingStrategy,
+                std::shared_ptr<MergeSort>>(m, "MergeSort")
+        .def(py::init<>());
+
+
     py::class_<CaseSorter>(m, "CaseSorter") 
         .def(py::init<std::shared_ptr<SortingStrategy>>())
         .def("sort", &CaseSorter::sort);

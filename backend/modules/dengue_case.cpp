@@ -21,15 +21,15 @@ PYBIND11_MODULE(dengue, m) {
         .def("mapDengueCase", &DadosAbertosMapper::mapDengueCase);
 
 
-    py::class_<FileManager>(m, "FileManager")
+    py::class_<BinaryFileManager<DengueCase>>(m, "BinaryDengueFileManager")
         .def(py::init<>())
-        .def("append_bin", &FileManager::append_bin)
-        .def("truncate_bins", &FileManager::truncate_bins)
-        .def("load_bin", &FileManager::load_bin)
-        .def("overwrite_bin", &FileManager::overwrite_bin)
-        .def("save_indexes", &FileManager::save_indexes)
-        .def("load_indexes", &FileManager::load_indexes)
-        .def("load_bin_from_index", &FileManager::load_bin_from_index);
+        .def("truncate_cases_year_bin", &BinaryFileManager<DengueCase>::truncate_cases_year_bin)
+        .def("append_cases_year_bin", &BinaryFileManager<DengueCase>::append_cases_year_bin)
+        .def("load_cases_date_bin", &BinaryFileManager<DengueCase>::load_cases_date_bin)
+        .def("overwrite_cases_bin", &BinaryFileManager<DengueCase>::overwrite_cases_bin)
+        .def("load_cases_from_index_bin", &BinaryFileManager<DengueCase>::load_cases_from_index_bin)
+        .def("overwrite_city_indexes", &BinaryFileManager<DengueCase>::overwrite_city_indexes)
+        .def("load_city_indexes", &BinaryFileManager<DengueCase>::load_city_indexes);
 
 
     py::class_<BinarySearch>(m, "BinarySearch")

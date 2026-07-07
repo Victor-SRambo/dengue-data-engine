@@ -60,12 +60,14 @@ class DengueDataSearcher(ArbovirusDataSearcher):
 
         for date in date_utils.get_all_months_datetime(start_date, end_date):
 
+            date_ym = date_utils.date_to_int_ym(date)
             index = self._get_city_index(date, city_code)
 
-            if index is None: month_num_cases[date_ym] = 0
-            
+            if index is None: 
+                month_num_cases[date_ym] = 0
+                continue
+
             num_cases = index.end - index.start
-            date_ym = date_utils.date_to_int_ym(date)
 
             month_num_cases[date_ym] = num_cases
 
@@ -75,7 +77,10 @@ class DengueDataSearcher(ArbovirusDataSearcher):
     def _get_city_index(self, date, city_code):
         date = date_utils.date_to_int_ym(date)
 
-        indexes = self.file_manager.load_indexes(date)
+        indexes = self.file_manager.load_city_indexes(date)
+
+        if indexes is None: return None
+
         index = self.binary_searcher.index_search(indexes, city_code)
 
         return index
@@ -83,7 +88,7 @@ class DengueDataSearcher(ArbovirusDataSearcher):
 
     def _get_cases_from_index(self, date, index):
         date_ym = date_utils.date_to_int_ym(date)
-        return self.file_manager.load_bin_from_index(date_ym, index)
+        return self.file_manager.load_cases_from_index_bin(date_ym, index)
     
 
     def _get_cases_after_date_in_month(self, date, city_code):
@@ -91,6 +96,7 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         if index is None: return []
 
         cases = self._get_cases_from_index(date, index)
+        if cases is None: return []
 
         date_ymd = date_utils.date_to_int_ymd(date)
         first_case = self.binary_searcher.after_date_search(cases, date_ymd)
@@ -112,7 +118,10 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         index = self._get_city_index(date, city_code)
         if index is None: return []
 
-        return self._get_cases_from_index(date, index)
+        cases = self._get_cases_from_index(date, index)
+        if cases is None: return []
+    
+        return cases
 
         
 

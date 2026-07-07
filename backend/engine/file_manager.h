@@ -8,25 +8,50 @@
 #include <fstream>
 #include <array>
 #include <string>
+#include <optional>
 
 //MUDAR NOME PARA BIN_MANAGER
 
-class FileManager {
+template <typename Arbovirus>
+class BinaryFileManager {
+private:
+    std::string _cases_folder_path;
+    std::string _cases_file_termination;
+    std::string _cases_file_prefix;
+
+    std::string _index_folder_path;
+    std::string _index_file_termination;
+    std::string _index_file_prefix;
+
+    static constexpr int NUM_MONTHS = 12;
 
 public:
 
-    void truncate_bins(int year) {
+    BinaryFileManager(std::string cases_folder_path = "backend/data/bins/",
+                std::string cases_file_termination = ".dat",
+                std::string cases_file_prefix = "file",
+                std::string index_folder_path = "backend/data/bins/",
+                std::string index_file_termination = ".idx",
+                std::string index_file_prefix = "index")
+
+        : _cases_folder_path(cases_folder_path),
+          _cases_file_termination(cases_file_termination),
+          _cases_file_prefix(cases_file_prefix),
+          _index_folder_path(index_folder_path),
+          _index_file_termination(index_file_termination),
+          _index_file_prefix(index_file_prefix) {}
+
+    void truncate_cases_year_bin(int date_y_full) {
 
         std::ofstream f;
 
-        for (int i = 0; i < 12; i++) {
-            std::string file_name =
-                "backend/data/bins/file" +
-                std::to_string(year) +
-                (i+1 < 10 ? "0" : "") +
-                std::to_string(i+1) +
-                ".dat";
-            f.open(file_name, std::ios::out | std::ios::binary | std::ios::trunc);
+        for (int i = 0; i < NUM_MONTHS; i++) {
+            std::string month = (i+1 < 10 ? "0" : "") + std::to_string(i+1);
+            std::string date_ym = std::to_string(date_y_full) + month;
+            std::string file_name = _cases_file_prefix + date_ym;
+            std::string file_path = _cases_folder_path + file_name + _cases_file_termination;
+
+            f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
     
             if (!f) {
                 std::cout << "File not exist!\n";
@@ -38,142 +63,154 @@ public:
     };
 
 
-    void append_bin(std::vector<DengueCase> cases, int year) {
-        size_t n = cases.size();
-        if (n == 0) return;
+    void append_cases_year_bin(std::vector<Arbovirus> cases, int date_y_full) {
+        if (cases.empty()) {
+            return;
+        } 
 
-        std::array<std::vector<DengueCase>, 12> cases_months;
+        size_t num_cases = cases.size();
 
-        for (int i = 0; i < n; i++) {
-            int case_year = cases[i].notification_date / 10000;
+        std::array<std::vector<Arbovirus>, NUM_MONTHS> cases_month_buffer;
 
+        for (size_t i = 0; i < num_cases; i++) {
+            int case_date_y_full = cases[i].notification_date / 10000; //take yyyy of date format yyyymmdd
 
-            if (case_year != year) {
+            if (case_date_y_full != date_y_full) {
                 continue; 
             }
 
-            int mes = ((cases[i].notification_date / 100) % 100) - 1;
-            if (mes >= 0 && mes < 12) {
-                cases_months[mes].push_back(cases[i]);
+            int month = ((cases[i].notification_date / 100) % 100); //take mm of date format yyyymmdd
+
+            if (month > 0 && month <= NUM_MONTHS) {
+                cases_month_buffer[month-1].push_back(cases[i]);
             }
         }
 
-        std::fstream f;
-        for (int i = 0; i < 12; i++) {
-            if (cases_months[i].empty()) continue; 
+        std::ofstream f;
 
-            std::string file_name =
-                "backend/data/bins/file" +
-                std::to_string(year) +
-                (i+1 < 10 ? "0" : "") +
-                std::to_string(i+1) +
-                ".dat";
+        for (int i = 0; i < NUM_MONTHS; i++) {
+            if (cases_month_buffer[i].empty()) {
+                continue;
+            }
 
+            std::string month = (i+1 < 10 ? "0" : "") + std::to_string(i+1);
+            std::string date_ym = std::to_string(date_y_full) + month;
+            std::string file_name = _cases_file_prefix + date_ym;
+            std::string file_path = _cases_folder_path + file_name + _cases_file_termination;
 
-            f.open(file_name, std::ios::out | std::ios::app | std::ios::binary);
+            f.open(file_path, std::ios::out | std::ios::app | std::ios::binary);
 
             if (f) {
-                f.write(reinterpret_cast<char*>(&cases_months[i][0]), sizeof(DengueCase) * cases_months[i].size());
+                f.write(reinterpret_cast<char*>(cases_month_buffer[i].data()), sizeof(Arbovirus) * cases_month_buffer[i].size());
             }
             f.close();
         }
     }
 
-    std::vector<DengueCase> load_bin(int date) {
+    std::optional<std::vector<Arbovirus>> load_cases_date_bin(int date_ym) {
         std::ifstream f;
-        std::string file_path = "backend/data/bins/file" + std::to_string(date) + ".dat";
+        std::string file_name = _cases_file_prefix + std::to_string(date_ym) + _cases_file_termination;
+        std::string file_path = _cases_folder_path + file_name;
+
         f.open(file_path, std::ios::ate | std::ios::binary);
 
         if (!f) {
-            std::cout << "File not exist!\n";   
-            return std::vector<DengueCase>();
+            return std::nullopt;
         }
 
         std::streamsize size = f.tellg();
 
-        size_t num_cases = size / sizeof(DengueCase);
+        size_t num_cases =  static_cast<size_t>(size) / sizeof(Arbovirus);
 
-        if (num_cases == 0) return {};
+        if (num_cases == 0) {
+            return std::nullopt;
+        } 
 
-        std::vector<DengueCase> cases(num_cases);
+        std::vector<Arbovirus> cases(num_cases);
 
         f.seekg(0, std::ios::beg);
 
-        f.read(reinterpret_cast<char*>(&cases[0]), size);
+        f.read(reinterpret_cast<char*>(cases.data()), size);
 
         f.close();
 
         return cases;
     };
 
+    void overwrite_cases_bin(std::vector<Arbovirus> cases, int date) {
+        std::ofstream f;
+        std::string file_name = _cases_file_prefix + std::to_string(date) + _cases_file_termination;
+        std::string file_path = _cases_folder_path + file_name;
 
-    std::vector<DengueCase> load_bin_from_index(int date, IndexRegister reg) {
+        f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
+
+        f.write(reinterpret_cast<char*>(&cases[0]), sizeof(Arbovirus) * cases.size());
+
+        f.close();
+    }
+
+
+    std::optional<std::vector<Arbovirus>> load_cases_from_index_bin(int date, IndexRegister reg) {
         std::ifstream f;
-        std::string file_path = "backend/data/bins/file" + std::to_string(date) + ".dat";
+        std::string file_name = _cases_file_prefix + std::to_string(date) + _cases_file_termination;
+        std::string file_path = _cases_folder_path + file_name;
 
         f.open(file_path, std::ios::ate | std::ios::binary);
 
         if (!f) {
             std::cout << "File not exist!\n";
-            return {};
+            return std::nullopt;
         }
 
         std::streamsize file_size = f.tellg();
-        size_t total_cases = static_cast<size_t>(file_size) / sizeof(DengueCase);
+        size_t total_cases = static_cast<size_t>(file_size) / sizeof(Arbovirus);
 
-        // validação dos índices
         if (reg.start < 0 || reg.end < reg.start) {
             std::cout << "Indices invalidos!\n";
-            return {};
+            return std::nullopt;
         }
 
         size_t start = static_cast<size_t>(reg.start);
-        size_t end   = static_cast<size_t>(reg.end);
+        size_t end = static_cast<size_t>(reg.end);
+
 
         if (start >= total_cases) {
             std::cout << "Start fora do intervalo do arquivo!\n";
-            return {};
+            return std::nullopt;
         }
 
-        // clamp: nao deixa ler alem do fim do arquivo
         if (end > total_cases) {
             end = total_cases;
         }
 
         size_t num_cases = end - start;
-        if (num_cases == 0) return {};
 
-        std::vector<DengueCase> cases(num_cases);
+        if (num_cases == 0) {
+            return std::nullopt;
+        }
 
-        std::streamoff offset = static_cast<std::streamoff>(start * sizeof(DengueCase));
+        std::vector<Arbovirus> cases(num_cases);
+
+        std::streamoff offset = static_cast<std::streamoff>(start * sizeof(Arbovirus));
         f.seekg(offset, std::ios::beg);
 
         f.read(reinterpret_cast<char*>(cases.data()),
-            static_cast<std::streamsize>(num_cases * sizeof(DengueCase)));
+            static_cast<std::streamsize>(num_cases * sizeof(Arbovirus)));
 
         if (!f) {
             std::cout << "Erro ao ler o arquivo!\n";
-            return {};
+            return std::nullopt;
         }
 
         return cases;
     }
 
-    void overwrite_bin(std::vector<DengueCase> cases, int date) {
+
+    void overwrite_city_indexes(std::vector<IndexRegister> registers, int date) {
         std::ofstream f;
-        std::string file_path = "backend/data/bins/file" + std::to_string(date) + ".dat";
+        std::string file_name = _index_file_prefix + std::to_string(date) + _index_file_termination;
+        std::string file_path = _index_folder_path + file_name;
 
-        f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
-
-        f.write(reinterpret_cast<char*>(&cases[0]), sizeof(DengueCase) * cases.size());
-
-        f.close();
-
-    }
-
-    void save_indexes(std::vector<IndexRegister> registers, int date) {
-        std::ofstream f;
-        std::string file_path = "backend/data/bins/index" + std::to_string(date) + ".idx";
 
         f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
 
@@ -182,19 +219,21 @@ public:
         f.close();  
     }
 
-    std::vector<IndexRegister> load_indexes(int date) {
+    std::optional<std::vector<IndexRegister>> load_city_indexes(int date) {
         std::ifstream f;
-        std::string file_path = "backend/data/bins/index" + std::to_string(date) + ".idx";
+        std::string file_name = _index_file_prefix + std::to_string(date) + _index_file_termination;
+        std::string file_path = _index_folder_path + file_name;
+
         f.open(file_path, std::ios::ate | std::ios::binary);
 
         if (!f) {
             std::cout << "File not exist!\n";   
-            return std::vector<IndexRegister>();
+            return std::nullopt;
         }
 
         std::streamsize size = f.tellg();
 
-        size_t num_cases = size / sizeof(IndexRegister);
+        size_t num_cases = static_cast<size_t>(size / sizeof(IndexRegister));
 
         std::vector<IndexRegister> registers(num_cases);
 

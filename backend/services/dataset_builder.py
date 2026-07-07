@@ -32,7 +32,7 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         print(f"Month Start {date}!!!")
         date = date_utils.date_to_int_ym(date)
 
-        cases = self.file_manager.load_bin(date)
+        cases = self.file_manager.load_cases_date_bin(date)
         if not cases: return
 
         print("carreguei os bins")
@@ -43,8 +43,8 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         sorted_cases_by_city_date = self._sort_cases_by_date_per_city(sorted_cases_by_city, city_indexes)
         print("fiz segundo sort")
 
-        self.file_manager.overwrite_bin(sorted_cases_by_city_date, date)
-        self.file_manager.save_indexes(city_indexes, date)
+        self.file_manager.overwrite_cases_bin(sorted_cases_by_city_date, date)
+        self.file_manager.overwrite_city_indexes(city_indexes, date)
 
 
     def _sort_cases_by_date_per_city(self, sorted_cases_by_city, city_indexes):

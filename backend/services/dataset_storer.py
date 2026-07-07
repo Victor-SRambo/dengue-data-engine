@@ -14,8 +14,6 @@ class ArbovirusDataStorer(ABC):
         pass   
 
 
-
-
 class DengueDataStorer(ArbovirusDataStorer):
 
     def __init__(self, loader, list_converter, mapper, file_manager):
@@ -35,7 +33,7 @@ class DengueDataStorer(ArbovirusDataStorer):
 
     def store_year(self, year):
         year = date_utils.date_to_int_y_full(year)
-        self.file_manager.truncate_bins(year)
+        self.file_manager.truncate_cases_year_bin(year)
 
         for df_batch in self.loader.batch_load_csv(year):
                 
@@ -43,7 +41,7 @@ class DengueDataStorer(ArbovirusDataStorer):
                      continue
 
                 fields = self.list_converter.to_list(df_batch)
-                dengue_cases = self.mapper.mapDengueCase(fields)
-                self.file_manager.append_bin(dengue_cases, year)
+                cases = self.mapper.mapDengueCase(fields)
+                self.file_manager.append_cases_year_bin(cases, year)
 
 

@@ -17,7 +17,7 @@ public:
 
 class MergeSort : public SortingStrategy {
 private:
-    std::vector<int> buffer;  // buffer auxiliar, alocado uma vez só
+    std::vector<int> buffer;  
 
     void merge(std::vector<int>& vector, std::vector<int>& idx, int min, int mid, int max) {
         int i = min;

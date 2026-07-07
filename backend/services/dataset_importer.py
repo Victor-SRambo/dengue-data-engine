@@ -15,8 +15,9 @@ class ArbovirusDataImporter(ABC):
 
 class DengueDataImporter(ArbovirusDataImporter):
 
-    def __init__(self, client):
+    def __init__(self, client, logger):
         self.client = client
+        self.logger = logger
 
 
     def import_years(self, start_year, end_year):
@@ -29,4 +30,9 @@ class DengueDataImporter(ArbovirusDataImporter):
 
     def import_year(self, year):
         year = date_utils.date_to_int_y_short(year)
+
+        self.logger.log_start_process(year)
+
         self.client.request_year_csv(year)
+
+        self.logger.log_end_process(year)

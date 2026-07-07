@@ -16,11 +16,13 @@ class ArbovirusDataStorer(ABC):
 
 class DengueDataStorer(ArbovirusDataStorer):
 
-    def __init__(self, loader, list_converter, mapper, file_manager):
-         self.loader = loader
-         self.list_converter = list_converter
-         self.mapper = mapper
-         self.file_manager = file_manager
+    def __init__(self, loader, normalizer, list_converter, mapper, file_manager, logger):
+        self.logger = logger
+        self.loader = loader
+        self.normalizer = normalizer
+        self.list_converter = list_converter
+        self.mapper = mapper
+        self.file_manager = file_manager
 
 
     def store_years(self, start_year, end_year):
@@ -31,17 +33,23 @@ class DengueDataStorer(ArbovirusDataStorer):
             self.store_year(year)
 
 
+
     def store_year(self, year):
         year = date_utils.date_to_int_y_full(year)
+        
+        self.logger.log_start_process(year)
+
         self.file_manager.truncate_cases_year_bin(year)
 
         for df_batch in self.loader.batch_load_csv(year):
-                
-                if df_batch is None: 
-                     continue
+            if df_batch is None: 
+                    continue
 
-                fields = self.list_converter.to_list(df_batch)
-                cases = self.mapper.map_vectors_to_class(fields)
-                self.file_manager.append_cases_year_bin(cases, year)
+            df_batch = self.normalizer.normalize_cases_csv(df_batch)
+            fields = self.list_converter.to_list(df_batch)
+            cases = self.mapper.map_vectors_to_class(fields)
+            self.file_manager.append_cases_year_bin(cases, year)
+
+        self.logger.log_end_process(year)
 
 

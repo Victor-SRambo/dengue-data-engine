@@ -52,7 +52,7 @@ public:
             f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
     
             if (!f) {
-                std::cout << "File not exist!\n";
+                std::cout << "File not found\n";
                 continue;
             }
             

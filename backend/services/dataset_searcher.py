@@ -25,18 +25,16 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         end_date = date_utils.convert_to_datetime(end_date)
         cases = []
 
-        month_diference = end_date.month - start_date.month
-        print(month_diference)
+        month_difference = end_date.month - start_date.month
 
-        if month_diference == 0:
+        if month_difference == 0:
             before_cases_dates = {c.notification_date for c in self._get_cases_before_date_in_month(end_date, city_code)}
 
             for case in self._get_cases_after_date_in_month(start_date, city_code):                    
                 if case.notification_date in before_cases_dates:
                     cases.append(case)
             
-        
-        elif month_diference == 1:
+        elif month_difference == 1:
             cases.extend(self._get_cases_after_date_in_month(start_date, city_code))
             cases.extend(self._get_cases_before_date_in_month(end_date, city_code))
 
@@ -68,7 +66,6 @@ class DengueDataSearcher(ArbovirusDataSearcher):
                 continue
 
             num_cases = index.end - index.start
-
             month_num_cases[date_ym] = num_cases
 
         return month_num_cases
@@ -78,24 +75,26 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         date = date_utils.date_to_int_ym(date)
 
         indexes = self.file_manager.load_city_indexes(date)
-
         if indexes is None: return None
 
         index = self.binary_searcher.index_search(indexes, city_code)
+        if index is None: return None
 
         return index
     
 
-    def _get_cases_from_index(self, date, index):
+    def _get_cases_from_city(self, date, city_code):
+        index = self._get_city_index(date, city_code)
+        if index is None: return None
+
         date_ym = date_utils.date_to_int_ym(date)
-        return self.file_manager.load_cases_from_index_bin(date_ym, index)
-    
+        cases = self.file_manager.load_cases_from_index_bin(date_ym, index)
+        if cases is None: return None
+
+        return cases
 
     def _get_cases_after_date_in_month(self, date, city_code):
-        index = self._get_city_index(date, city_code)
-        if index is None: return []
-
-        cases = self._get_cases_from_index(date, index)
+        cases = self._get_cases_from_city(date, city_code)
         if cases is None: return []
 
         date_ymd = date_utils.date_to_int_ymd(date)
@@ -103,10 +102,8 @@ class DengueDataSearcher(ArbovirusDataSearcher):
         return cases[first_case::]
 
     def _get_cases_before_date_in_month(self, date, city_code):
-        index = self._get_city_index(date, city_code)
-        if index is None: return []
-
-        cases = self._get_cases_from_index(date, index)
+        cases = self._get_cases_from_city(date, city_code)
+        if cases is None: return []
 
         date_ymd = date_utils.date_to_int_ymd(date)
         last_case = self.binary_searcher.before_date_search(cases, date_ymd)
@@ -115,10 +112,7 @@ class DengueDataSearcher(ArbovirusDataSearcher):
 
 
     def _get_cases_entire_month(self, date, city_code):
-        index = self._get_city_index(date, city_code)
-        if index is None: return []
-
-        cases = self._get_cases_from_index(date, index)
+        cases = self._get_cases_from_city(date, city_code)
         if cases is None: return []
     
         return cases

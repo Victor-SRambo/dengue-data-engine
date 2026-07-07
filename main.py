@@ -20,8 +20,8 @@ dataset_importer = factory.create_dengue_dataset_importer()
 dataset_searcher = factory.create_dengue_dataset_searcher()
 dataset_forecaster = factory.create_dengue_dataset_forecaster()
 
-dataset_importer.import_years(20241201, 20261201)
-dataset_storer.store_years(20241201, 20261201)
+"""dataset_importer.import_years(20241201, 20261201)
+dataset_storer.store_years(20241201, 20261201)"""
 dataset_builder.build_years(20241201, 20261201)
 
 cases = dataset_searcher.get_cases_dates(20240107, 20260708, 431140)

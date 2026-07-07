@@ -24,8 +24,6 @@ class ArbovirusNormalizer(ABC):
 class DengueNormalizer(ArbovirusNormalizer):
 
     def normalize_cases_csv(self, df):
-        print("Normalizing batch")
-
         df = self.normalize_date(df, "DT_NOTIFIC")
         df = self.normalize_date(df, "DT_SIN_PRI")
         df = self.normalize_int(df, "SEM_NOT")

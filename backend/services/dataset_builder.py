@@ -13,10 +13,11 @@ class ArbovirusDataBuilder(ABC):
 
 class DengueDataBuilder(ArbovirusDataBuilder):
 
-    def __init__(self, file_manager, sorter, indexer):
+    def __init__(self, file_manager, sorter, indexer, logger):
         self.file_manager = file_manager
         self.sorter = sorter
         self.indexer = indexer
+        self.logger = logger
 
 
     def build_years(self, start_year, end_year):
@@ -24,27 +25,24 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         end_year = date_utils.convert_to_datetime(end_year)
 
         for date in date_utils.get_all_months_datetime(start_year, end_year):
-            print(f"Month Start {date}!!!")
             self._build_month(date)
 
 
     def _build_month(self, date):
-        print(f"Month Start {date}!!!")
         date = date_utils.date_to_int_ym(date)
+        self.logger.log_start_process(date)
 
         cases = self.file_manager.load_cases_date_bin(date)
         if not cases: return
 
-        print("carreguei os bins")
         sorted_cases_by_city = [cases[i] for i in self.sorter.sort(cases, case_sorter.CityCodeField())]
-        print("fiz primeiro sort")
         city_indexes = self.indexer.create_city_indexes(sorted_cases_by_city)
-        print("fiz index")
         sorted_cases_by_city_date = self._sort_cases_by_date_per_city(sorted_cases_by_city, city_indexes)
-        print("fiz segundo sort")
 
         self.file_manager.overwrite_cases_bin(sorted_cases_by_city_date, date)
         self.file_manager.overwrite_city_indexes(city_indexes, date)
+
+        self.logger.log_end_process(date)
 
 
     def _sort_cases_by_date_per_city(self, sorted_cases_by_city, city_indexes):

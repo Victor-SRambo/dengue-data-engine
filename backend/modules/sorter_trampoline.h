@@ -7,7 +7,7 @@ public:
     using CaseSortingField::CaseSortingField;
 
     // CORREÇÃO: Adicionado o 'const' para casar exatamente com a classe base corrigida
-    int extract(DengueCase& c) override {
+    int extract(const DengueCase& c) override {
         PYBIND11_OVERRIDE_PURE(
             int,               // Tipo de retorno
             CaseSortingField,  // Classe pai

@@ -1,18 +1,16 @@
-
 #pragma once 
 
 #include <vector>
 #include <array>
 #include <optional>
 #include "dengue_case.h"
-#include "indexer.h"
-
+#include "case_indexer.h"
 
 
 class BinarySearch {
 
 public:
-    std::optional<IndexRegister> index_search(std::vector<IndexRegister> registers, int target_code) {
+    std::optional<IndexRegister> index_search(const std::vector<IndexRegister>& registers, int target_code) {
 
         int m;
         int l = 0;

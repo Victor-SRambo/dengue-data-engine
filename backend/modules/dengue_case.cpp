@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "dengue_case.h"
-#include "mapper.h"
-#include "file_manager.h"
-#include "indexer.h"
+#include "case_mapper.h"
+#include "bin_file_manager.h"
+#include "case_indexer.h"
 #include "binary_search.h"
 
 #include <pybind11/pybind11.h>
@@ -16,9 +16,9 @@ namespace py = pybind11;
 PYBIND11_MODULE(dengue, m) {
 
     
-    py::class_<DadosAbertosMapper>(m, "DadosAbertosMapper")
+    py::class_<DengueCaseMapper>(m, "DengueCaseMapper")
         .def(py::init<>())
-        .def("mapDengueCase", &DadosAbertosMapper::mapDengueCase);
+        .def("map_vectors_to_class", &DengueCaseMapper::map_vectors_to_class);
 
 
     py::class_<BinaryFileManager<DengueCase>>(m, "BinaryDengueFileManager")
@@ -69,9 +69,9 @@ PYBIND11_MODULE(dengue, m) {
         .def_readwrite("start", &IndexRegister::start)
         .def_readwrite("end", &IndexRegister::end);
 
-    py::class_<Indexer>(m, "Indexer")
+    py::class_<CaseIndexer>(m, "CaseIndexer")
         .def(py::init<>())
-        .def("create_index", &Indexer::create_index);
+        .def("create_city_indexes", &CaseIndexer::create_city_indexes);
 
     py::class_<DengueCase>(m, "DengueCase")
         .def(py::init<>())

@@ -38,7 +38,7 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         print("carreguei os bins")
         sorted_cases_by_city = [cases[i] for i in self.sorter.sort(cases, case_sorter.CityCodeField())]
         print("fiz primeiro sort")
-        city_indexes = self.indexer.create_index(sorted_cases_by_city)
+        city_indexes = self.indexer.create_city_indexes(sorted_cases_by_city)
         print("fiz index")
         sorted_cases_by_city_date = self._sort_cases_by_date_per_city(sorted_cases_by_city, city_indexes)
         print("fiz segundo sort")

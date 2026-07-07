@@ -1,16 +1,14 @@
-
 #pragma once 
 
 #include <vector>
 #include <iostream>
 #include "dengue_case.h"
-#include "indexer.h"
+#include "case_indexer.h"
 #include <fstream>
 #include <array>
 #include <string>
 #include <optional>
 
-//MUDAR NOME PARA BIN_MANAGER
 
 template <typename Arbovirus>
 class BinaryFileManager {
@@ -63,7 +61,7 @@ public:
     };
 
 
-    void append_cases_year_bin(std::vector<Arbovirus> cases, int date_y_full) {
+    void append_cases_year_bin(const std::vector<Arbovirus>& cases, int date_y_full) {
         if (cases.empty()) {
             return;
         } 
@@ -101,7 +99,7 @@ public:
             f.open(file_path, std::ios::out | std::ios::app | std::ios::binary);
 
             if (f) {
-                f.write(reinterpret_cast<char*>(cases_month_buffer[i].data()), sizeof(Arbovirus) * cases_month_buffer[i].size());
+                f.write(reinterpret_cast<const char*>(cases_month_buffer[i].data()), sizeof(Arbovirus) * cases_month_buffer[i].size());
             }
             f.close();
         }
@@ -137,20 +135,20 @@ public:
         return cases;
     };
 
-    void overwrite_cases_bin(std::vector<Arbovirus> cases, int date) {
+    void overwrite_cases_bin(const std::vector<Arbovirus>& cases, int date) {
         std::ofstream f;
         std::string file_name = _cases_file_prefix + std::to_string(date) + _cases_file_termination;
         std::string file_path = _cases_folder_path + file_name;
 
         f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
 
-        f.write(reinterpret_cast<char*>(&cases[0]), sizeof(Arbovirus) * cases.size());
+        f.write(reinterpret_cast<const char*>(&cases[0]), sizeof(Arbovirus) * cases.size());
 
         f.close();
     }
 
 
-    std::optional<std::vector<Arbovirus>> load_cases_from_index_bin(int date, IndexRegister reg) {
+    std::optional<std::vector<Arbovirus>> load_cases_from_index_bin(int date, const IndexRegister reg) {
         std::ifstream f;
         std::string file_name = _cases_file_prefix + std::to_string(date) + _cases_file_termination;
         std::string file_path = _cases_folder_path + file_name;
@@ -206,7 +204,7 @@ public:
     }
 
 
-    void overwrite_city_indexes(std::vector<IndexRegister> registers, int date) {
+    void overwrite_city_indexes(const std::vector<IndexRegister>& registers, int date) {
         std::ofstream f;
         std::string file_name = _index_file_prefix + std::to_string(date) + _index_file_termination;
         std::string file_path = _index_folder_path + file_name;
@@ -214,7 +212,7 @@ public:
 
         f.open(file_path, std::ios::out | std::ios::binary | std::ios::trunc);
 
-        f.write(reinterpret_cast<char*>(&registers[0]), sizeof(IndexRegister) * registers.size());
+        f.write(reinterpret_cast<const char*>(&registers[0]), sizeof(IndexRegister) * registers.size());
 
         f.close();  
     }

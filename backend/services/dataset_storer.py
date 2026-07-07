@@ -41,7 +41,7 @@ class DengueDataStorer(ArbovirusDataStorer):
                      continue
 
                 fields = self.list_converter.to_list(df_batch)
-                cases = self.mapper.mapDengueCase(fields)
+                cases = self.mapper.map_vectors_to_class(fields)
                 self.file_manager.append_cases_year_bin(cases, year)
 
 

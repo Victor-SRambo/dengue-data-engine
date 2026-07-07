@@ -34,20 +34,20 @@ class DengueNumCasesResponse(BaseModel):
     num_cases: int
 
 
-_page_max_size = 500
-_city_code_description = "**Filter:** Brazilian City of Occurrence \n- **Format:** `Six first digits of IBGE city code identifier`"
-_start_date_description = "**Filter:** Start Date \n - **Format:**: `YYYYMMDD`"
-_end_date_description = "**Filter:** End Date \n - **Format:**: `YYYYMMDD`"
+_PAGE_MAX_SIZE= 500
+_CITY_CODE_DESCRIPTION = "**Filter:** Brazilian City of Occurrence \n- **Format:** `Six first digits of IBGE city code identifier`"
+_START_DATE_DESCRIPTION = "**Filter:** Start Date \n - **Format:**: `YYYYMMDD`"
+_END_DATE_DESCRIPTION = "**Filter:** End Date \n - **Format:**: `YYYYMMDD`"
 
 
 @router.get("/cases/city-date", response_model=List[DengueCaseResponse])
-def get_cases(city_code: int = Query(description=_city_code_description), 
-              start_date: int = Query(description=_start_date_description), 
-              end_date: int = Query(description=_end_date_description),
+def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION), 
+              start_date: int = Query(description=_START_DATE_DESCRIPTION), 
+              end_date: int = Query(description=_END_DATE_DESCRIPTION),
               page: int = 1,
-              page_size: int = _page_max_size):
+              page_size: int = _PAGE_MAX_SIZE):
     
-    page_size = min(page_size, _page_max_size)
+    page_size = min(page_size, _PAGE_MAX_SIZE)
     offset = (page - 1) * page_size
 
     dataset_searcher = factory.create_dengue_dataset_searcher()
@@ -62,7 +62,7 @@ def get_cases(city_code: int = Query(description=_city_code_description),
 
 
 @router.get("/cases/forecast", response_model=List[DengueNumCasesResponse])
-def get_cases(city_code: int = Query(description=_city_code_description)):
+def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION)):
     
     dataset_forecaster = factory.create_dengue_dataset_forecaster()
     date_to_forecast = dataset_forecaster.get_dengue_forecast(city_code)
@@ -75,9 +75,9 @@ def get_cases(city_code: int = Query(description=_city_code_description)):
 
 
 @router.get("/num-cases/city-date", response_model=List[DengueNumCasesResponse])
-def get_cases(city_code: int = Query(description=_city_code_description), 
-              start_date: int = Query(description=_start_date_description), 
-              end_date: int = Query(description=_end_date_description)):
+def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION), 
+              start_date: int = Query(description=_START_DATE_DESCRIPTION), 
+              end_date: int = Query(description=_END_DATE_DESCRIPTION)):
     
     dataset_searcher = factory.create_dengue_dataset_searcher()
     num_monthly_cases = dataset_searcher.get_num_cases_dates(start_date, end_date, city_code)

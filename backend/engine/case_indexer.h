@@ -7,7 +7,6 @@
 
 
 
-
 struct IndexRegister {
     int city_notification_code;
     long int start;
@@ -15,14 +14,13 @@ struct IndexRegister {
 };
 
 
-class Indexer {
+class CaseIndexer {
 
 public:
 
-    std::vector<IndexRegister> create_index(std::vector<DengueCase> cases) {
+    std::vector<IndexRegister> create_city_indexes(const std::vector<DengueCase>& cases) {
         
         std::vector<IndexRegister> indexes;
-
 
         size_t size = cases.size();
         int last_city_code = 0;

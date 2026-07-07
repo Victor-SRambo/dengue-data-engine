@@ -16,7 +16,7 @@ def create_dengue_dataset_storer():
 
     loader = csv_loader.DengueLoader(normalizer=normalizer)
     list_converter = csv_list_converter.DengueListConverter()
-    mapper = dengue.DadosAbertosMapper()
+    mapper = dengue.DengueCaseMapper()
     file_manager = dengue.BinaryDengueFileManager()
 
     return dataset_storer.DengueDataStorer(loader=loader,
@@ -29,7 +29,7 @@ def create_dengue_dataset_builder():
     file_manager = dengue.BinaryDengueFileManager()
     sorting_method = case_sorter.MergeSort()
     sorter = case_sorter.CaseSorter(sorting_method)
-    indexer = dengue.Indexer()
+    indexer = dengue.CaseIndexer()
 
     return dataset_builder.DengueDataBuilder(file_manager=file_manager,
                                              sorter=sorter,

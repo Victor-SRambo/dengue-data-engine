@@ -2,11 +2,8 @@
 #pragma once 
 
 #include <vector>
+#include <optional>
 #include "dengue_case.h"
-
-class CaseMapper {
-
-};
 
 
 struct DengueFieldVectors{
@@ -32,13 +29,18 @@ struct DengueFieldVectors{
 };
 
 
-class DadosAbertosMapper {
+class DengueCaseMapper {
 
 public:
-    std::vector<DengueCase> mapDengueCase(DengueFieldVectors v) {
-
+    std::optional<std::vector<DengueCase>> map_vectors_to_class(const DengueFieldVectors& v) {
         size_t size = v.notification_dates.size();
+
+        if (size <= 0) {
+            return std::nullopt;
+        }
+
         std::vector<DengueCase> cases;
+        cases.reserve(size);
 
         for (int i = 0; i < size; i++) {
             DengueCase c;
@@ -61,8 +63,5 @@ public:
         }
 
         return cases;
-
     }
-
-    
 };

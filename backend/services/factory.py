@@ -2,7 +2,7 @@
 
 from backend.integration import dados_abertos
 from backend.services import csv_list_converter, csv_loader, csv_normalizer
-from backend.services import dataset_builder, dataset_importer, dataset_searcher, dataset_storer
+from backend.services import dataset_builder, dataset_importer, dataset_searcher, dataset_storer, dataset_forecaster
 from build.Debug import dengue, case_sorter
 
 
@@ -20,9 +20,9 @@ def create_dengue_dataset_storer():
     file_manager = dengue.FileManager()
 
     return dataset_storer.DengueDataStorer(loader=loader,
-                                        list_converter=list_converter,
-                                        mapper=mapper,
-                                        file_manager=file_manager)
+                                           list_converter=list_converter,
+                                           mapper=mapper,
+                                           file_manager=file_manager)
 
 
 def create_dengue_dataset_builder():
@@ -32,8 +32,8 @@ def create_dengue_dataset_builder():
     indexer = dengue.Indexer()
 
     return dataset_builder.DengueDataBuilder(file_manager=file_manager,
-                                            sorter=sorter,
-                                            indexer=indexer)
+                                             sorter=sorter,
+                                             indexer=indexer)
 
 
 def create_dengue_dataset_searcher():
@@ -42,4 +42,10 @@ def create_dengue_dataset_searcher():
 
     return dataset_searcher.DengueDataSearcher(file_manager=file_manager, 
                                                binary_searcher=binary_searcher)
+
+
+def create_dengue_dataset_forecaster():
+    searcher = create_dengue_dataset_searcher()
+
+    return dataset_forecaster.DengueDataForecaster(searcher=searcher)
 

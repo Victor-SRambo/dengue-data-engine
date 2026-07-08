@@ -39,6 +39,7 @@ public:
           _index_file_termination(index_file_termination),
           _index_file_prefix(index_file_prefix) {}
 
+          
     void truncate_cases_year_bin(int date_y_full) {
 
         std::ofstream f;
@@ -112,7 +113,10 @@ public:
 
         f.open(file_path, std::ios::ate | std::ios::binary);
 
+        std::cout << file_path << "\n";
+
         if (!f) {
+            std::cout << "Error opening file \n";
             return std::nullopt;
         }
 
@@ -155,8 +159,10 @@ public:
 
         f.open(file_path, std::ios::ate | std::ios::binary);
 
+    
+
         if (!f) {
-            std::cout << "File not exist!\n";
+            std::cout << file_path << " Path doesn't exist, failed to load cases from index\n";
             return std::nullopt;
         }
 
@@ -225,7 +231,7 @@ public:
         f.open(file_path, std::ios::ate | std::ios::binary);
 
         if (!f) {
-            std::cout << "File not exist!\n";   
+            std::cout << file_path << " Path doesn't exist, failed to load city indexes\n";   
             return std::nullopt;
         }
 

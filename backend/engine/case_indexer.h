@@ -14,11 +14,11 @@ struct IndexRegister {
 };
 
 
+template <typename Arbovirus>
 class CaseIndexer {
-
 public:
 
-    std::vector<IndexRegister> create_city_indexes(const std::vector<DengueCase>& cases) {
+    std::vector<IndexRegister> create_city_indexes(const std::vector<Arbovirus>& cases) {
         
         std::vector<IndexRegister> indexes;
 

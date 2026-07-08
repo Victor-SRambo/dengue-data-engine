@@ -6,9 +6,8 @@
 #include "dengue_case.h"
 #include "case_indexer.h"
 
-
+template <typename Arbovirus>
 class BinarySearch {
-
 public:
     std::optional<IndexRegister> index_search(const std::vector<IndexRegister>& registers, int target_code) {
 
@@ -35,10 +34,9 @@ public:
 
 
     int after_date_search(
-        const std::vector<DengueCase>& cases,
+        const std::vector<Arbovirus>& cases,
         int date)
     {
-
         int l = 0;
         int r = cases.size() - 1;
         while (l <= r) {
@@ -65,7 +63,7 @@ public:
 
 
     int before_date_search(
-        const std::vector<DengueCase>& cases,
+        const std::vector<Arbovirus>& cases,
         int date)
     {
 

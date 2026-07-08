@@ -15,13 +15,15 @@ class ArbovirusHttpClient(ABC):
 class DengueHttpClient(ArbovirusHttpClient):
 
     def request_year_csv(self, year):
-        url = f"https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINAN/Dengue/csv/DENGBR{year}.csv.zip"
+
+        year_short = year % 100  # Date Format: YYYY -> YY
+        url = f"https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINAN/Dengue/csv/DENGBR{year_short}.csv.zip"
         mb = 100 *1024 *1024 # 100 mb
 
         response = requests.get(url, stream=True) 
 
         if response.status_code != 200: 
-            print("Erro ao fazer request do recurso")
+            print("Error doing request of resource")
             return None
         
 
@@ -32,4 +34,4 @@ class DengueHttpClient(ArbovirusHttpClient):
         with zipfile.ZipFile("backend/data/temp.zip","r") as file:
             file.extractall("backend/data")
 
-        os.replace(f"backend/data/DENGBR{year}.csv", f"backend/data/DENGBR20{year}.csv")
+        os.replace(f"backend/data/DENGBR{year_short}.csv", f"backend/data/DENGBR{year}.csv")

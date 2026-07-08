@@ -9,11 +9,10 @@
 #include "dengue_case.h"
 
 
-
-
+template <typename Arbovirus>
 class CaseSortingField {
 public:
-    void get_field(std::vector<int>& field_cases, std::vector<DengueCase>& cases, std::vector<int>& indexes) {
+    void get_field(std::vector<int>& field_cases, std::vector<Arbovirus>& cases, std::vector<int>& indexes) {
         size_t size = cases.size();
 
         for (size_t i = 0; i < size; i++) {
@@ -25,27 +24,29 @@ public:
     virtual ~CaseSortingField() = default;
 
 protected:
-    virtual int extract(const DengueCase& c) = 0;
+    virtual int extract(const Arbovirus& c) = 0;
 };
 
 
-class DateField : public CaseSortingField {
+template <typename Arbovirus>
+class DateField : public CaseSortingField<Arbovirus> {
 protected:
-    int extract(const DengueCase& c) override {
+    int extract(const Arbovirus& c) override {
         return c.notification_date;
     }
 };
 
 
-class CityCodeField : public CaseSortingField {
+template <typename Arbovirus>
+class CityCodeField : public CaseSortingField<Arbovirus> {
 protected:
-    int extract(const DengueCase& c) override {
+    int extract(const Arbovirus& c) override {
         return c.city_notification_code;
     }
 };
 
 
-
+template <typename Arbovirus>
 class CaseSorter {
 private:
     std::shared_ptr<SortingStrategy> _sorting;
@@ -56,7 +57,7 @@ public:
         : _sorting(sorting) {}
 
 
-    std::vector<int> sort(std::vector<DengueCase>& cases, std::shared_ptr<CaseSortingField> field) {
+    std::vector<int> sort(std::vector<Arbovirus>& cases, std::shared_ptr<CaseSortingField<Arbovirus>> field) {
         size_t size = cases.size();
 
         std::vector<int> field_cases;

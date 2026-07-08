@@ -6,14 +6,14 @@ from backend.services import dataset_builder, dataset_importer, dataset_searcher
 from backend.services import data_logger
 from build.Debug import dengue, engine
 
-def create_dengue_dataset_importer():
+def create_dengue_dataset_importer() -> dataset_importer.DengueDataImporter:
     http_client = dados_abertos.DengueHttpClient()
     logger = data_logger.ImporterLogger()
     return dataset_importer.DengueDataImporter(client=http_client,
                                                logger=logger)
 
 
-def create_dengue_dataset_storer():
+def create_dengue_dataset_storer() -> dataset_storer.DengueDataStorer:
     normalizer = csv_normalizer.DengueNormalizer()
     loader = csv_loader.DengueLoader()
     list_converter = csv_list_converter.DengueListConverter()
@@ -29,7 +29,7 @@ def create_dengue_dataset_storer():
                                            logger=logger)
 
 
-def create_dengue_dataset_builder():
+def create_dengue_dataset_builder() -> dataset_builder.DengueDataBuilder:
     file_manager = engine.DengueBinaryFileManager()
     sorting_method = engine.MergeSort()
     sorter = engine.DengueCaseSorter(sorting_method)
@@ -43,7 +43,7 @@ def create_dengue_dataset_builder():
                                              logger=logger)
 
 
-def create_dengue_dataset_searcher():
+def create_dengue_dataset_searcher() -> dataset_searcher.DengueDataSearcher:
     file_manager = engine.DengueBinaryFileManager()
     binary_searcher= engine.DengueBinarySearch()
 
@@ -51,7 +51,7 @@ def create_dengue_dataset_searcher():
                                                binary_searcher=binary_searcher)
 
 
-def create_dengue_dataset_forecaster():
+def create_dengue_dataset_forecaster() -> dataset_forecaster.DengueDataForecaster:
     searcher = create_dengue_dataset_searcher()
 
     return dataset_forecaster.DengueDataForecaster(searcher=searcher)

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import polars as pl
+from collections.abc import Iterator
 import os
 
 
@@ -16,13 +17,13 @@ _COLUMNS = [
 class ArboVirusLoader(ABC):
 
     @abstractmethod
-    def batch_load_csv(self, year):
+    def batch_load_csv(self, year: int) -> Iterator[pl.DataFrame]:
         pass
 
 
 class DengueLoader(ArboVirusLoader):
 
-    def batch_load_csv(self, year):
+    def batch_load_csv(self, year: int) -> Iterator[pl.DataFrame]:
         folder_path = "backend/data/"
         file_name = f"DENGBR{year}.csv"
 

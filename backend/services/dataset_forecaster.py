@@ -2,16 +2,18 @@ from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from backend.services.utils import date_utils
 from dateutil.relativedelta import relativedelta
 from abc import ABC, abstractmethod
+import pandas as pd
 
 
 
 _LATEST_DATE_RECORD = 20200101
 _SEASONAL_PERIODS = 12
+_OFFSET = 1
 
 class ArbovirusDataForecaster(ABC):
 
     @abstractmethod 
-    def get_dengue_forecast(self, city_code):
+    def get_dengue_forecast(self, city_code: int) -> dict:
         pass
 
 
@@ -27,19 +29,20 @@ class DengueDataForecaster:
         return self._generate_forecast_dict(forecast, date_to_num_cases)
 
 
-    def _generate_dengue_forecast(self, date_to_num_cases: dict):
-        num_cases = [num for num in date_to_num_cases.values()]
+    def _generate_dengue_forecast(self, date_to_num_cases: dict) -> pd.Series:
+        num_cases = [num + _OFFSET for num in date_to_num_cases.values()]
 
         model = ExponentialSmoothing(
             num_cases,
             trend="add",
-            seasonal="add",
+            seasonal="mul",
             damped_trend=True,
             seasonal_periods=_SEASONAL_PERIODS,
             initialization_method="estimated"
         ).fit()
 
         forecast = model.forecast(12)
+        forecast = (forecast - _OFFSET).clip(min=0)
         forecast = forecast.round(0)
 
         return forecast

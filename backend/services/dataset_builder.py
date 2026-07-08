@@ -6,7 +6,7 @@ from backend.services.utils import date_utils
 class ArbovirusDataBuilder(ABC):
 
     @abstractmethod
-    def build_months(self, start_year, end_year):
+    def build_years(self, start_date_ym: int, end_date_ym: int) -> None:
         pass   
 
 
@@ -20,17 +20,16 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         self.logger = logger
 
 
-    def build_months(self, start_date_ym: int, end_date_ym: int):
+    def build_years(self, start_date_ym: int, end_date_ym: int) -> None:
         for date_ym in date_utils.get_all_months_int(start_date_ym, end_date_ym):
             self._build_month(date_ym)
 
 
-    def _build_month(self, date_ym: int):
+    def _build_month(self, date_ym: int) -> None:
         self.logger.log_start_process(date_ym)
 
         cases = self.file_manager.load_cases_date_bin(date_ym)
         if not cases: 
-            print("parei aqui")
             return
 
         sorted_cases_by_city = [cases[i] for i in self.sorter.sort(cases, engine.DengueCityCodeField())]
@@ -44,7 +43,7 @@ class DengueDataBuilder(ArbovirusDataBuilder):
         self.logger.log_end_process(date_ym)
 
 
-    def _sort_cases_by_date_per_city(self, sorted_cases_by_city, city_indexes):
+    def _sort_cases_by_date_per_city(self, sorted_cases_by_city: list, city_indexes: int) -> list:
         sorted_cases = []
         
         for index in city_indexes:

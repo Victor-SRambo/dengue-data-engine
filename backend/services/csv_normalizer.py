@@ -5,25 +5,25 @@ import polars as pl
 class ArbovirusNormalizer(ABC):
 
     @abstractmethod
-    def normalize_cases_csv(self, df):
+    def normalize_cases_csv(self, df: pl.DataFrame) -> pl.DataFrame:
         pass
 
     @abstractmethod
-    def normalize_date(self, df, column):
+    def normalize_date(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         pass
 
     @abstractmethod
-    def normalize_int(self, df, column):
+    def normalize_int(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         pass
 
     @abstractmethod
-    def normalize_sex(self, df, column):
+    def normalize_sex(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         pass
 
 
 class DengueNormalizer(ArbovirusNormalizer):
 
-    def normalize_cases_csv(self, df):
+    def normalize_cases_csv(self, df: pl.DataFrame) -> pl.DataFrame:
         df = self.normalize_date(df, "DT_NOTIFIC")
         df = self.normalize_date(df, "DT_SIN_PRI")
         df = self.normalize_int(df, "SEM_NOT")
@@ -42,7 +42,7 @@ class DengueNormalizer(ArbovirusNormalizer):
         return df
     
 
-    def normalize_date(self, df, column):
+    def normalize_date(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         df = df.with_columns(
             pl.col(column)
             .str.replace_all("-", "")
@@ -55,7 +55,7 @@ class DengueNormalizer(ArbovirusNormalizer):
         )
     
 
-    def normalize_int(self, df, column):
+    def normalize_int(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         return df.with_columns(
             pl.col(column)
             .cast(pl.Int64, strict=False)
@@ -64,7 +64,7 @@ class DengueNormalizer(ArbovirusNormalizer):
         )
     
 
-    def normalize_sex(self, df, column):
+    def normalize_sex(self, df: pl.DataFrame, column: str) -> pl.DataFrame:
         return df.with_columns(
             pl.col(column)
             .fill_null("?")

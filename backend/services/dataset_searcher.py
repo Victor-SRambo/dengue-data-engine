@@ -8,11 +8,11 @@ from build.Debug.engine import IndexRegister
 class ArbovirusDataSearcher(ABC):
 
     @abstractmethod
-    def get_cases_dates(self, start_date, end_date, city_code):
+    def get_cases_dates(self, start_date: int, end_date: int, city_code: int) -> list[DengueCase]:
         pass   
 
     @abstractmethod
-    def get_num_cases_dates(self, start_date, end_date, city_code):
+    def get_num_cases_dates(self, start_date: int, end_date: int, city_code: int) -> dict:
         pass   
 
 

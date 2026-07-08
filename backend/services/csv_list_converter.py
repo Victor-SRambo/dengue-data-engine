@@ -1,17 +1,18 @@
 from abc import ABC, abstractmethod
 from build.Debug import dengue
+import polars as pl
 
 
 class ArbovirusListConverter(ABC):
 
     @abstractmethod
-    def to_list(self, df):
+    def to_list(self, df: pl.DataFrame):
         pass
 
 
 class DengueListConverter(ArbovirusListConverter):
 
-    def to_list(self, df):
+    def to_list(self, df: pl.DataFrame) -> dengue.DengueFieldVectors:
         fields = dengue.DengueFieldVectors()
 
         fields.notification_dates = df["DT_NOTIFIC"].to_list()

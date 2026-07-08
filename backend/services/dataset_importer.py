@@ -1,17 +1,16 @@
 from abc import ABC, abstractmethod
 from backend.services.utils import date_utils
-from datetime import datetime
 
 
 class ArbovirusDataImporter(ABC):
 
     @abstractmethod
-    def import_years(self, year):
+    def import_years(self, start_year: int, end_year: int) -> None:
         pass   
 
 
     @abstractmethod
-    def import_year(self, start_year, end_year):
+    def import_year(self, year: int) -> None:
         pass   
 
 

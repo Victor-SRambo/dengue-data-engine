@@ -1,8 +1,7 @@
 
 from abc import ABC, abstractmethod
 from backend.services.utils import date_utils
-from datetime import datetime
-
+import os
 
 class ArbovirusDataStorer(ABC):
 
@@ -31,7 +30,6 @@ class DengueDataStorer(ArbovirusDataStorer):
             self.store_year(year)
 
 
-
     def store_year(self, year: int) -> None:
         self.logger.log_start_process(year)
 
@@ -46,6 +44,7 @@ class DengueDataStorer(ArbovirusDataStorer):
             cases = self.mapper.map_vectors_to_class(fields)
             self.file_manager.append_cases_year_bin(cases, year)
 
+        os.remove(f"backend/data/DENGBR{year}.csv")
         self.logger.log_end_process(year)
 
 

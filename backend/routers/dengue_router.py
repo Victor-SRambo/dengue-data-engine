@@ -44,8 +44,14 @@ _CITY_CODE_EXAMPLE = 431490
 _START_DATE_EXAMPLE = 20240101
 _END_DATE_EXAMPLE = 20260601
 
+_GET_CASES_CITY_DATE_SUMMARY = "Get dengue cases by city and date"
+_GET_NUM_CASES_CITY_DATE_SUMMARY = "Get the monthly number of dengue cases by city and date"
+_GET_CASES_FORECAST_SUMMARY = "Get a one-year forecast of dengue case counts"
 
-@router.get("/cases/city-date", response_model=List[DengueCaseResponse])
+@router.get(
+        "/cases/city-date", 
+        response_model=List[DengueCaseResponse],
+        summary=_GET_CASES_CITY_DATE_SUMMARY)
 def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION, example=_CITY_CODE_EXAMPLE), 
               start_date: int = Query(description=_START_DATE_DESCRIPTION, example=_START_DATE_EXAMPLE), 
               end_date: int = Query(description=_END_DATE_DESCRIPTION, example=_END_DATE_EXAMPLE),
@@ -66,7 +72,9 @@ def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION, example
     return response
 
 
-@router.get("/cases/forecast", response_model=List[DengueNumCasesResponse])
+@router.get("/cases/forecast", 
+            response_model=List[DengueNumCasesResponse],
+            summary=_GET_CASES_FORECAST_SUMMARY)
 def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION, example=_CITY_CODE_EXAMPLE)):
     
     dataset_forecaster = factory.create_dengue_dataset_forecaster()
@@ -79,7 +87,9 @@ def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION, example
     return response
 
 
-@router.get("/num-cases/city-date", response_model=List[DengueNumCasesResponse])
+@router.get("/num-cases/city-date", 
+            response_model=List[DengueNumCasesResponse],
+            summary=_GET_NUM_CASES_CITY_DATE_SUMMARY)
 def get_cases(city_code: int = Query(description=_CITY_CODE_DESCRIPTION, example=_CITY_CODE_EXAMPLE), 
               start_date: int = Query(description=_START_DATE_DESCRIPTION,  example=_START_DATE_EXAMPLE), 
               end_date: int = Query(description=_END_DATE_DESCRIPTION,  example=_END_DATE_EXAMPLE)):

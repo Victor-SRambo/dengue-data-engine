@@ -21,23 +21,6 @@ PYBIND11_MODULE(dengue, m) {
         .def("map_vectors_to_class", &DengueCaseMapper::map_vectors_to_class);
 
 
-    py::class_<BinaryFileManager<DengueCase>>(m, "BinaryDengueFileManager")
-        .def(py::init<>())
-        .def("truncate_cases_year_bin", &BinaryFileManager<DengueCase>::truncate_cases_year_bin)
-        .def("append_cases_year_bin", &BinaryFileManager<DengueCase>::append_cases_year_bin)
-        .def("load_cases_date_bin", &BinaryFileManager<DengueCase>::load_cases_date_bin)
-        .def("overwrite_cases_bin", &BinaryFileManager<DengueCase>::overwrite_cases_bin)
-        .def("load_cases_from_index_bin", &BinaryFileManager<DengueCase>::load_cases_from_index_bin)
-        .def("overwrite_city_indexes", &BinaryFileManager<DengueCase>::overwrite_city_indexes)
-        .def("load_city_indexes", &BinaryFileManager<DengueCase>::load_city_indexes);
-
-
-    py::class_<BinarySearch>(m, "BinarySearch")
-        .def(py::init<>())
-        .def("index_search", &BinarySearch::index_search)
-        .def("after_date_search", &BinarySearch::after_date_search)
-        .def("before_date_search", &BinarySearch::before_date_search);
-
 
     py::class_<DengueFieldVectors>(m, "DengueFieldVectors")
         .def(py::init<>())
@@ -62,17 +45,6 @@ PYBIND11_MODULE(dengue, m) {
         .def_readwrite("sexes", &DengueFieldVectors::sexes);
 
     
-
-    py::class_<IndexRegister>(m, "IndexRegister")
-        .def(py::init<>())
-        .def_readwrite("city_notification_code", &IndexRegister::city_notification_code)
-        .def_readwrite("start", &IndexRegister::start)
-        .def_readwrite("end", &IndexRegister::end);
-
-    py::class_<CaseIndexer>(m, "CaseIndexer")
-        .def(py::init<>())
-        .def("create_city_indexes", &CaseIndexer::create_city_indexes);
-
     py::class_<DengueCase>(m, "DengueCase")
         .def(py::init<>())
 

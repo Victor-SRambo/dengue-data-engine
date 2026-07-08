@@ -8,9 +8,9 @@ The storage core is written in C++, using low-level, optimized, and ordered data
 ## Architecture
 
 ```text
-| SINAN/Dengue |    |Colection Pipeline|    |   C++ core   |    |  Fast Api  |
-| (open-data)  | -> | (python-scripts) | -> |(order, store,| -> | (REST API) |
-|              |    |                  |    |  fetch data) |    |            |
+| SINAN/Dengue |    | ColLection Pipeline |    |   C++ core     |    |  FastAPI   |
+| (open-data)  | -> |  (python-scripts)   | -> | (order, store, | -> | (REST API) |
+|              |    |                     |    |  fetch data)   |    |            |
 ```
 
 - Collection: Python scripts download and normalize the raw data from the Ministry of Health's open data portal.
@@ -41,17 +41,23 @@ cd dengue-data-engine
 
 
 ### 2. Set up Python virtual environment 
-### Linux
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+- ### Linux
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    ```
 
-### Windows
-```bash
-python -m venv .venv
-.venv\Scripts\activate.bat
-```
+- ### Windows CMD
+    ```cmd
+    python -m venv .venv
+    .venv\Scripts\activate.bat
+    ```
+
+- ### Windows PowerShell
+    ```powershell
+    python -m venv .venv
+    .venv\Scripts\Activate.ps1
+    ```
 
 ### 3. Install Python dependencies
 ```bash
@@ -60,12 +66,28 @@ pip install -r requirements.txt
 
 ### 4. Build the C++ core (Python extension via pybind11)
 
-```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
-```
+
+- ### MSVC (Microsoft Visual C++)
+
+    ```bash
+    mkdir build
+    cd build
+    cmake ..
+    cmake --build .
+    ```
+
+- ### MinGW-w64 / GCC
+
+    ```bash
+    mkdir build
+    cd build
+    cmake -G "MinGW Makefiles" ..
+    cmake --build .
+    ```
+
+
+> ⚠️ Note: the compiler and python installed must have the same architecture (recommended: both 64 bits)
+
 
 ### 5. Generate Dataset
 ```bash

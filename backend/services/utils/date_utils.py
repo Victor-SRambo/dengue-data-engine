@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
+from collections.abc import Iterator
 
 
 def convert_to_datetime(date):
@@ -60,3 +61,14 @@ def get_all_years_datetime(start_date, end_date):
     while current_date <= end_date:
         yield current_date
         current_date += relativedelta(years=1)
+
+
+def get_all_years_int(start_year: int, end_year: int) -> Iterator[int]:
+    for year in range(start_year, end_year + 1):
+        yield year
+
+
+def get_all_months_int(start_year: int, end_year: int) -> Iterator[int]:
+    for year in range(start_year, end_year + 1):
+        for month in range(1, 13):
+            yield year * 100 + month

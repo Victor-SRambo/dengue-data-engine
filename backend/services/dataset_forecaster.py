@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 
 
-_LATEST_DATE_RECORD = 20200417
+_LATEST_DATE_RECORD = 20200101
 _SEASONAL_PERIODS = 12
 
 class ArbovirusDataForecaster(ABC):
@@ -21,7 +21,7 @@ class DengueDataForecaster:
         self.searcher = searcher
 
 
-    def get_dengue_forecast(self, city_code):
+    def get_dengue_forecast(self, city_code: int) -> dict:
         date_to_num_cases = self.searcher.get_num_cases_dates(_LATEST_DATE_RECORD, 20260615, city_code)
         forecast = self._generate_dengue_forecast(date_to_num_cases)
         return self._generate_forecast_dict(forecast, date_to_num_cases)
@@ -39,13 +39,13 @@ class DengueDataForecaster:
             initialization_method="estimated"
         ).fit()
 
-        forecast = model.forecast(12).clip(min=0)
+        forecast = model.forecast(12)
         forecast = forecast.round(0)
 
         return forecast
     
 
-    def _generate_forecast_dict(self, forecast, date_to_num_cases):
+    def _generate_forecast_dict(self, forecast, date_to_num_cases) -> dict:
         dates = [date for date in date_to_num_cases.keys()]
 
         prevision_by_date = {}

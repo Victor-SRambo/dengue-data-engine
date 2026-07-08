@@ -19,7 +19,7 @@ class StorerLogger(Logger):
 
 
     def log_end_process(self, date):
-        print(f"Year Stored - {date}")
+        print(f"Year stored - {date}")
 
 
 class ImporterLogger(Logger):
@@ -29,7 +29,7 @@ class ImporterLogger(Logger):
 
 
     def log_end_process(self, date):
-        print(f"Year Importing - {date}")
+        print(f"Year imported - {date}")
 
 
 class BuilderLogger(Logger):

@@ -113,7 +113,6 @@ public:
 
         f.open(file_path, std::ios::ate | std::ios::binary);
 
-        std::cout << file_path << "\n";
 
         if (!f) {
             std::cout << "Error opening file \n";
@@ -159,7 +158,6 @@ public:
 
         f.open(file_path, std::ios::ate | std::ios::binary);
 
-    
 
         if (!f) {
             std::cout << file_path << " Path doesn't exist, failed to load cases from index\n";

@@ -8,13 +8,13 @@ import os
 class ArbovirusHttpClient(ABC):
 
     @abstractmethod
-    def request_year_csv(self, year):
+    def request_year_csv(self, year: int) -> None:
         pass
 
 
 class DengueHttpClient(ArbovirusHttpClient):
 
-    def request_year_csv(self, year):
+    def request_year_csv(self, year: int) -> None:
 
         year_short = year % 100  # Date Format: YYYY -> YY
         url = f"https://s3.sa-east-1.amazonaws.com/ckan.saude.gov.br/SINAN/Dengue/csv/DENGBR{year_short}.csv.zip"
@@ -35,3 +35,4 @@ class DengueHttpClient(ArbovirusHttpClient):
             file.extractall("backend/data")
 
         os.replace(f"backend/data/DENGBR{year_short}.csv", f"backend/data/DENGBR{year}.csv")
+        os.remove(f"backend/data/temp.zip")

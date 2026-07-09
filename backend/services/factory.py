@@ -4,7 +4,7 @@ from backend.integration import dados_abertos
 from backend.services import csv_list_converter, csv_loader, csv_normalizer
 from backend.services import dataset_builder, dataset_importer, dataset_searcher, dataset_storer, dataset_forecaster
 from backend.services import data_logger
-from build.Debug import dengue, engine
+from build.modules import dengue, engine
 
 def create_dengue_dataset_importer() -> dataset_importer.DengueDataImporter:
     http_client = dados_abertos.DengueHttpClient()

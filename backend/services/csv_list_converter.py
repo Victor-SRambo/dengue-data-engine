@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from build.Debug import dengue
+from build.modules import dengue
 import polars as pl
 
 

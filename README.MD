@@ -97,7 +97,7 @@ python -m scripts.manage_dataset generate --start-year <start-year> --end-year <
 ## Running
 
 ```bash
-uvicorn backend.main:app --reload
+uvicorn main:app --reload
 ```
 
 ## API Documentation

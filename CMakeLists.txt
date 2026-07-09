@@ -47,3 +47,8 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/backend/modules/bindings
     ${CMAKE_CURRENT_SOURCE_DIR}/backend/engine
 )
+
+if(MINGW)
+    target_link_options(dengue PRIVATE -static-libgcc -static-libstdc++ -static -lwinpthread)
+    target_link_options(engine PRIVATE -static-libgcc -static-libstdc++ -static -lwinpthread)
+endif()
